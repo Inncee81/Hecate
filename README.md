@@ -80,6 +80,19 @@ The build system’s inherent knowledge combined with the regular directory stru
 the built-in default behavior. Anyways, there might be the need of partially altering certain behavior. Defining an 
 override for the built-in PU to be altered is the way to achieve that
 
+## Pipeline Hooks
+
+The build system pipeline groups a list of nodes which define the most common steps that should only be executed one after
+another in the process of transforming input data to the desired output. However, there might be situations in a project when
+additional tasks need to be executed before or after certain build step has finisched. This is where Pipeline Hooks, lightweight
+execution nodes are introduced.
+
+A hook can be thought of as an event listener, which also follows the reactive programming paradigm, in the sense that an event 
+triggers more actions to happen before or after PUs start their work. While lightweight, hooks may perform as powerful as an
+entire PU while not following their strict design rules. Hooks cannot be overriden or automatically prioritized by a dispatcher
+and are executed all at the same time. They have been designed mainly for the purpose of being easy added, for example from an
+editor script in the development environment
+
 ## Requirements
 
 * Minimum C# 5 on .Net Framework 4.0 or equivalent Mono version
