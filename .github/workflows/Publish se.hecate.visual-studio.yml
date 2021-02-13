@@ -1,0 +1,32 @@
+name: Publish se.hecate.visual-studio
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: 
+      - 'VisualStudio/package.json'
+
+jobs:
+  publish-gpr:
+    runs-on: ubuntu-latest
+    env:
+      sub-dir: 'VisualStudio'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://npm.pkg.github.com/
+          scope: 'SchroedingerEntertainment'
+      - run: npm install
+        working-directory: ${{env.sub-dir}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GLOBAL_PACKAGE_READ}}
+      - run: npm ci
+        working-directory: ${{env.sub-dir}}
+      - run: npm publish
+        working-directory: ${{env.sub-dir}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
