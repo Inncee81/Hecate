@@ -98,6 +98,35 @@ editor script in the development environment
 * Minimum C# 5 on .Net Framework 4.0 or equivalent Mono version
 * Windows or Linux Operation System
 
+## How to Build
+
+Hecate is a modular software project, which means that it is assembled from a number of required and optional components. It is
+required to create a defined directory structure first, so that a directory named **Config** marks the top of the SDK structure.
+Hecate is created out of a primary package
+
+* [se.hecate.hqt](https://github.com/SchroedingerEntertainment/Hecate/packages/622485)
+
+It is recommended to placed the package into a sub-directory *Hecate*.
+The following dependencies are also required to be present
+
+* [se.apollo.package](https://github.com/SchroedingerEntertainment/Apollo/packages/622425)
+* [se.sharp.actor](https://github.com/SchroedingerEntertainment/Sharp/packages/622402)
+* [se.sharp.alchemy](https://github.com/SchroedingerEntertainment/Sharp/packages/622395)
+* [se.sharp.app](https://github.com/SchroedingerEntertainment/Sharp/packages/622390)
+* [se.sharp.command-line](https://github.com/SchroedingerEntertainment/Sharp/packages/622397)
+* [se.sharp.common](https://github.com/SchroedingerEntertainment/Sharp/packages/622343)
+* [se.sharp.config](https://github.com/SchroedingerEntertainment/Sharp/packages/622400)
+* [se.sharp.flex](https://github.com/SchroedingerEntertainment/Sharp/packages/622388)
+* [se.sharp.json](https://github.com/SchroedingerEntertainment/Sharp/packages/622394)
+* [se.sharp.parsing](https://github.com/SchroedingerEntertainment/Sharp/packages/622387)
+* [se.sharp.reactive](https://github.com/SchroedingerEntertainment/Sharp/packages/622384)
+* [se.sharp.sharp-lang](https://github.com/SchroedingerEntertainment/Sharp/packages/622403)
+* [se.sharp.tar](https://github.com/SchroedingerEntertainment/Sharp/packages/622393)
+* [se.sharp.web](https://github.com/SchroedingerEntertainment/Sharp/packages/622401)
+
+It is recommended to placed the apollo package into a sub-directory *Apollo*.
+Hecate contains a script (.bat for Windows, .sh for Linux) which locates the C# compiler and creates the initial executable.
+
 ## Repository
 
 The release branch is usually extensively tested. However, bugs are everywhere and we work hard to make releases stable and
