@@ -1,0 +1,31 @@
+{
+    "name" : "@schroedingerentertainment/se.hecate.visual-studio",
+    "description" : "Microsoft Visual Studio IDE Extension",
+    "homepage" : "https://github.com/SchroedingerEntertainment/Hecate",
+    "license" : "AGPL-3.0-or-later",
+    "version" : "1.0.0",
+    "dependencies": {
+        "@schroedingerentertainment/se.sharp.command-line": "^1.0.0",
+        "@schroedingerentertainment/se.sharp.common": "^1.0.0",
+        "@schroedingerentertainment/se.sharp.config": "^1.0.0",
+        "@schroedingerentertainment/se.sharp.flex": "^1.0.0"
+    },
+    "peerdependencies": {
+        "@schroedingerentertainment/se.hecate.hqt": "^1.0.0"
+    },
+    "keywords" : [
+        "C#",
+        "sharp",
+        "csharp",
+        "hecate"
+    ],
+    "author" : {
+        "name" : "Shaarigan",
+        "url" : "https://github.com/Shaarigan"
+    },
+    "repository" : {
+        "url" : "https://github.com/SchroedingerEntertainment/Hecate.git",
+        "type" : "git",
+        "directory" : "VisualStudio"
+    }
+}
