@@ -37,6 +37,16 @@ namespace SE.Hecate.Sharp
             set { settings = value; }
         }
 
+        CacheEntry cache;
+        /// <summary>
+        /// A CSharp cache entry instance assigned to this rule
+        /// </summary>
+        public CacheEntry Cache
+        {
+            get { return cache; }
+            set { cache = value; }
+        }
+
         /// <summary>
         /// Creates this rule
         /// </summary>
@@ -123,7 +133,11 @@ namespace SE.Hecate.Sharp
                 buffer.Insert(0, '.');
                 buffer.Insert(0, scope.Item2);
             }
-            settings.Namespaces.Add(buffer.ToString());
+            lock (settings.Namespaces)
+            {
+                settings.Namespaces.Add(buffer.ToString());
+            }
+            cache.Namespaces.Add(buffer.ToString());
             scopes.Push(current);
         }
     }

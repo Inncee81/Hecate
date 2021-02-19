@@ -156,23 +156,34 @@ namespace SE.Hecate.Build
 
                 #region Build Modules
                 Application.Log(SeverityFlags.Full, "Creating build modules");
-
-                foreach (PathDescriptor path in directories)
                 {
-                    BuildModule module = null;
-                    FileDescriptor packageFile; if (path.FindFile("package.json", out packageFile, PathSeekOptions.RootLevel))
+                    Dictionary<BuildModule, PackageMeta> modules = new Dictionary<BuildModule, PackageMeta>();
+                    foreach (PathDescriptor path in directories)
                     {
-                        PackageMeta pkg; if (packageFile.GetPackage(Application.LogSystem, out pkg) && pkg.Id.IsValid && pkg.Version.IsValid)
+                        BuildModule module = new BuildModule(path);
+                        FileDescriptor packageFile; if (path.FindFile("package.json", out packageFile, PathSeekOptions.RootLevel))
                         {
-                            module = new BuildModule(path, pkg.References.Count > 0);
-                            module.SetProperty(pkg);
+                            PackageMeta pkg; if (packageFile.GetPackage(Application.LogSystem, out pkg) && pkg.Id.IsValid && pkg.Version.IsValid)
+                            {
+                                module.SetProperty(pkg);
+                                modules.Add(module, pkg);
+                            }
                         }
+                        setup.SetProperty(path.FullName, module);
                     }
-                    if (module == null)
-                    {
-                        module = new BuildModule(path, false);
-                    }
-                    setup.SetProperty(path.FullName, module);
+                    foreach(KeyValuePair<BuildModule, PackageMeta> module in modules)
+                        if (module.Value.References.Count > 0)
+                        {
+                            foreach (KeyValuePair<PackageId, PackageVersion> reference in module.Value.References)
+                            {
+                                PackageMeta dependency = modules.Where(d => d.Value.Id.Match(reference.Key)).Select(d => d.Value).FirstOrDefault();
+                                if (dependency != null && dependency.Version.Match(reference.Value))
+                                {
+                                    module.Key.IsPackage = true;
+                                    break;
+                                }
+                            }
+                        }
                 }
                 LoadPackages(setup, directories);
                 #endregion
@@ -194,7 +205,7 @@ namespace SE.Hecate.Build
                                 Application.Error(SeverityFlags.Minimal, "{0} step failed", family.ToString().ToLowerInvariant());
                                 return code;
                             }
-                            else if (!workDone && family >= ProcessorFamilies.Conversion)
+                            else if (!workDone && family >= ProcessorFamilies.Conversion && family < ProcessorFamilies.Postprocess)
                             {
                                 workDone = true;
                             }
@@ -256,6 +267,7 @@ namespace SE.Hecate.Build
                     PropertyMapper.Assign<BuildParameter>(CommandLineOptions.Default, true, true);
                     command.Attach(Process(directories));
                 }
+                else Application.Warning(SeverityFlags.Minimal, "Nothing to do!");
                 return true;
             }
             else return false;
@@ -332,7 +344,9 @@ namespace SE.Hecate.Build
                     }
                     if (!isArgs)
                     {
-                        BuildModule module = new BuildModule(path, true);
+                        BuildModule module = new BuildModule(path);
+                        module.IsPackage = true;
+
                         FileDescriptor packageFile; if (path.FindFile("package.json", out packageFile, PathSeekOptions.RootLevel))
                         {
                             PackageMeta pkg; if (packageFile.GetPackage(Application.LogSystem, out pkg) && pkg.Id.IsValid && pkg.Version.IsValid)

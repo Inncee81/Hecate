@@ -37,15 +37,15 @@ namespace SE.Hecate.Build
         public bool IsPackage
         {
             get { return isPackage; }
+            internal set { isPackage = value; }
         }
 
         /// <summary>
         /// Creates a new instance from the provided directory path
         /// </summary>
-        public BuildModule(PathDescriptor location, bool asPackage)
+        public BuildModule(PathDescriptor location)
         {
             this.location = location;
-            this.isPackage = asPackage;
         }
 
         public override int GetHashCode()

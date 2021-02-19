@@ -12,9 +12,18 @@ namespace SE.Hecate.Sharp
     /// <summary>
     /// A pipeline message used to process a CSharp related lookup task
     /// </summary>
-    public class PreprocessCommand : KernelMessage, IEnumerable<FileSystemDescriptor>
+    public class ValidationCommand : KernelMessage, IEnumerable<FileSystemDescriptor>
     {
         IEnumerable<FileSystemDescriptor> files;
+
+        string name;
+        /// <summary>
+        /// The name of the BuildModule instance attached to this action
+        /// </summary>
+        public string Name
+        {
+            get { return name; }
+        }
 
         BuildProfile profile;
         /// <summary>
@@ -28,9 +37,10 @@ namespace SE.Hecate.Sharp
         /// <summary>
         /// Creates a new message instance from the provided CSharp files
         /// </summary>
-        public PreprocessCommand(BuildModule module, BuildProfile profile, IEnumerable<FileSystemDescriptor> files)
+        public ValidationCommand(BuildModule module, BuildProfile profile, IEnumerable<FileSystemDescriptor> files)
             : base(module.Template | (UInt32)ProcessorFamilies.SharpInitialize, module.Location)
         {
+            this.name = module.Name;
             this.profile = profile;
             this.files = files;
         }

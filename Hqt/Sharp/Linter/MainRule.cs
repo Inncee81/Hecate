@@ -109,11 +109,14 @@ namespace SE.Hecate.Sharp
         }
 
         public override void OnReset()
-        {
-        }
+        { }
         public override void OnCompleted()
         {
-            settings.AssemblyType = BuildModuleType.Console;
+            lock (settings)
+            {
+                if (settings.AssemblyType <= BuildModuleType.DynamicLibrary)
+                    settings.AssemblyType = BuildModuleType.Console;
+            }
         }
     }
 }

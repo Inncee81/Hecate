@@ -17,7 +17,7 @@ namespace SE.Hecate.Sharp
     /// Pipeline node to perform CSharp code file lookups
     /// </summary>
     [ProcessorUnit(IsExtension = true)]
-    public class PreprocessController : ProcessorUnit, IPrioritizedActor
+    public class ValidationController : ProcessorUnit, IPrioritizedActor
     {
         /// <summary>
         /// Files that are considered to belong to CSharp code
@@ -45,10 +45,10 @@ namespace SE.Hecate.Sharp
         }
         public override UInt32 Family
         {
-            get { return (UInt32)ProcessorFamilies.Preprocess; }
+            get { return (UInt32)ProcessorFamilies.Validation; }
         }
 
-        static PreprocessController()
+        static ValidationController()
         {
             fileFilter = new Filter();
             foreach (string extension in ValidFileExtensions)
@@ -71,7 +71,7 @@ namespace SE.Hecate.Sharp
         /// <summary>
         /// Creates a new node instance
         /// </summary>
-        public PreprocessController()
+        public ValidationController()
         { }
 
         public void Attach(PriorityDispatcher owner)
@@ -98,41 +98,46 @@ namespace SE.Hecate.Sharp
         public void OnCompleted()
         { }
 
-        private static async Task<int> Process(BuildModule module, BuildProfile profile)
+        private static async Task<int> Process(BuildModule module, BuildProfile profile, TaskCompletionSource<bool> isValidSharpModuleFlag)
         {
-            List<FileSystemDescriptor> files = CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Get();
-            foreach (PathDescriptor subFolder in module.Location.FindDirectories(directoryFilter))
+            if(!module.IsPackage || await isValidSharpModuleFlag.Task)
             {
-                if (subFolder.Name.Equals("resources", StringComparison.InvariantCultureIgnoreCase))
+                List<FileSystemDescriptor> files = CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Get();
+                foreach (PathDescriptor subFolder in module.Location.FindDirectories(directoryFilter))
                 {
-                    files.AddRange(subFolder.GetFiles());
-                }
-                else subFolder.FindFiles(fileFilter, files);
-            }
-            module.Location.FindFiles(fileFilter, files, PathSeekOptions.Forward | PathSeekOptions.RootLevel);
-            if (files.Where(x => fileFilter.IsMatch(x.FullName)).Any())
-            {
-                PreprocessCommand command = new PreprocessCommand(module, profile, files);
-                try
-                {
-                    bool exit; if (Kernel.Dispatch(command, out exit))
+                    if (subFolder.Name.Equals("resources", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return await command.Task.ContinueWith<int>((task) =>
+                        files.AddRange(subFolder.GetFiles());
+                    }
+                    else subFolder.FindFiles(fileFilter, files);
+                }
+                module.Location.FindFiles(fileFilter, files, PathSeekOptions.Forward | PathSeekOptions.RootLevel);
+                if (files.Where(x => fileFilter.IsMatch(x.FullName)).Any())
+                {
+                    isValidSharpModuleFlag.TrySetResult(true);
+                    ValidationCommand command = new ValidationCommand(module, profile, files);
+                    try
+                    {
+                        bool exit; if (Kernel.Dispatch(command, out exit))
                         {
-                            CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Return(files);
-                            return task.Result;
+                            return await command.Task.ContinueWith<int>((task) =>
+                            {
+                                CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Return(files);
+                                return task.Result;
 
-                        });
+                            });
+                        }
+                        else if (exit)
+                        {
+                            return Application.FailureReturnCode;
+                        }
                     }
-                    else if (exit)
+                    finally
                     {
-                        return Application.FailureReturnCode;
+                        command.Release();
                     }
                 }
-                finally
-                {
-                    command.Release();
-                }
+                else isValidSharpModuleFlag.TrySetResult(false);
             }
             return Application.SuccessReturnCode;
         }
@@ -144,9 +149,16 @@ namespace SE.Hecate.Sharp
                 if (PropertyManager.FindProperties(x => x.Value is BuildModule, modules) > 0)
                 {
                     BuildProfile profile; command.TryGetProperty<BuildProfile>(out profile);
-                    foreach (BuildModule module in modules)
+                    TaskCompletionSource<bool> isValidSharpModuleFlag = new TaskCompletionSource<bool>();
+                    IEnumerator<object> iterator = modules.OrderBy(x => (x as BuildModule), BuildModuleComparer.Default).GetEnumerator();
+                    for(bool first = true; iterator.MoveNext(); first = false)
                     {
-                        command.Attach(Process(module, profile));
+                        BuildModule module = (iterator.Current as BuildModule);
+                        if (first && module.IsPackage)
+                        {
+                            isValidSharpModuleFlag.TrySetResult(false);
+                        }
+                        command.Attach(Process(module, profile, isValidSharpModuleFlag));
                     }
                     return true;
                 }

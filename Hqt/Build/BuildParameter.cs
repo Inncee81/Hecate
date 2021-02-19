@@ -24,6 +24,17 @@ namespace SE.Hecate.Build
             get { return fast; }
         }
 
+        [NamedProperty('e', "rebuild")]
+        [PropertyDescription("Tells the pipeline to performe clean rebuilding ignoring caches", Type = PropertyType.Optional)]
+        private static bool rebuild = false;
+        /// <summary>
+        /// A flag to process with clean data and no caches
+        /// </summary>
+        public static bool Rebuild
+        {
+            get { return rebuild; }
+        }
+
         private BuildParameter()
         { }
     }

@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using SE.Hecate.Build;
 using SE.Parsing;
 using SE.SharpLang;
 
@@ -18,6 +20,8 @@ namespace SE.Hecate.Sharp
     [ProcessorUnit(IsBuiltIn = true)]
     public class SharpController : ProcessorUnit
     {
+        private readonly static Type CacheType = typeof(BuildModuleCache<CacheItem>);
+
         public override PathDescriptor Target
         {
             get { return Application.SdkRoot; }
@@ -37,10 +41,11 @@ namespace SE.Hecate.Sharp
         public SharpController()
         { }
 
-        private static int Process(SharpModule module, FileDescriptor file)
+        private static int Process(SharpModule module, BuildModuleCache<CacheItem> cache, FileDescriptor file)
         {
             Stopwatch timer = new Stopwatch();
             Linter linter = new Linter();
+            bool fromCache = true;
 
             #region Rules
             NamespaceRule namespaceRule = ParserRulePool<NamespaceRule, SharpToken>.Get();
@@ -59,29 +64,90 @@ namespace SE.Hecate.Sharp
                 linter.AddRule(usingRule);
                 linter.AddRule(mainRule);
 
+                #region Cache
+                CacheItem item;
+                bool hasCache = false;
+                lock (cache)
+                {
+                    if (!cache.TryGetValue(file, out item) || item.Timestamp != file.Timestamp)
+                    {
+                        if (item != null)
+                        {
+                            item.Dispose();
+                            item = new CacheItem(file.Timestamp);
+                            cache[file] = item;
+                        }
+                        else
+                        {
+                            item = new CacheItem(file.Timestamp);
+                            cache.Add(file, item);
+                        }
+                    }
+                    else hasCache = !BuildParameter.Rebuild;
+                }
+                #endregion
+
                 #region Lint
                 using (FileStream fs = file.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    //TODO cache lookup
-
                     timer.Start();
                     foreach (SharpModuleSettings config in module.Settings.Values)
                     {
-                        fs.Position = 0;
-                        linter.Defines.Clear();
-
-                        #region Rules
-                        namespaceRule.Settings = config;
-                        usingRule.Settings = config;
-                        mainRule.Settings = config;
-                        #endregion
-
-                        foreach (string define in config.Defines)
+                        CacheEntry entry; if(item.Entries.TryGetValue(config.Name, out entry) && hasCache)
                         {
-                            linter.Define(define);
+                            lock (config)
+                            {
+                                if (config.AssemblyType < entry.AssemblyType)
+                                    config.AssemblyType = entry.AssemblyType;
+                            }
+                            foreach (string usingDirective in entry.UsingDirectives)
+                            {
+                                lock (config.UsingDirectives)
+                                    config.UsingDirectives.Add(usingDirective);
+                            }
+                            foreach (string @namespace in entry.Namespaces)
+                            {
+                                lock (config.Namespaces)
+                                    config.Namespaces.Add(@namespace);
+                            }
                         }
-                        if (!Lint(linter, fs, file.FullName))
-                            return Application.FailureReturnCode;
+                        else
+                        {
+                            fromCache = false;
+
+                            fs.Position = 0;
+                            linter.Defines.Clear();
+
+                            #region Rules
+                            if (entry == null)
+                            {
+                                entry = new CacheEntry();
+                                item.Entries.Add(config.Name, entry);
+
+                                lock (cache)
+                                {
+                                    cache.Modified = true;
+                                }
+                            }
+
+                            namespaceRule.Settings = config;
+                            namespaceRule.Cache = entry;
+
+                            usingRule.Settings = config;
+                            usingRule.Cache = entry;
+
+                            mainRule.Settings = config;
+                            #endregion
+
+                            foreach (string define in config.Defines)
+                            {
+                                linter.Define(define);
+                            }
+                            if (!Lint(linter, fs, file.GetAbsolutePath()))
+                                return Application.FailureReturnCode;
+
+                            entry.AssemblyType = config.AssemblyType;
+                        }
                     }
                     timer.Stop();
                 }
@@ -96,31 +162,113 @@ namespace SE.Hecate.Sharp
                 #endregion
             }
 
-            Application.Log(SeverityFlags.Full, "Linting {0} in {1}ms", file.FullName, timer.ElapsedMilliseconds);
+            if (!fromCache)
+            {
+                Application.Log(SeverityFlags.Full, "Linting {0} in {1}ms", file.FullName, timer.ElapsedMilliseconds);
+            }
             return Application.SuccessReturnCode;
         }
         public override bool Process(KernelMessage command)
         {
-            PreprocessCommand sharp = (command as PreprocessCommand);
+            ValidationCommand sharp = (command as ValidationCommand);
             if (sharp != null)
             {
                 SharpModule module = null;
-                foreach (FileDescriptor file in sharp)
+                List<Task<int>> tasks = CollectionPool<List<Task<int>>, Task<int>>.Get();
+                try
                 {
-                    if (file.Extension.Equals("cs", StringComparison.InvariantCultureIgnoreCase))
+                    BuildModuleCache<CacheItem> cache = null;
+                    FileDescriptor cacheFile = null;
+                    
+                    foreach (FileDescriptor file in sharp)
                     {
-                        if (module == null)
+                        switch (file.Extension.ToLowerInvariant())
                         {
-                            module = new SharpModule(sharp.Profile);
-                            sharp.SetProperty(module);
+                            case "cs":
+                                {
+                                    if (module == null)
+                                    {
+                                        LoadCache(sharp, out cache, out cacheFile);
+
+                                        module = new SharpModule(sharp.Profile);
+                                        sharp.SetProperty(module);
+                                    }
+                                    tasks.Add(Taskʾ.Run<int>(() => Process(module, cache, file)));
+                                }
+                                goto case "resx";
+                            case "resx":
+                                {
+                                    if (module == null)
+                                    {
+                                        LoadCache(sharp, out cache, out cacheFile);
+
+                                        module = new SharpModule(sharp.Profile);
+                                        sharp.SetProperty(module);
+                                    }
+                                    module.Files.Add(file);
+                                }
+                                break;
                         }
-                        sharp.Attach(Taskʾ.Run<int>(() => Process(module, file)));
-                        module.Files.Add(file);
                     }
+                    sharp.Attach(Taskʾ.WhenAll(tasks).ContinueWith<int>((task) =>
+                    {
+                        int returnCode = KernelMessage.Validate(task);
+                        if (cacheFile != null && cache.Modified && returnCode == Application.SuccessReturnCode)
+                        {
+                            try
+                            {
+                                using (FileStream fs = cacheFile.Open(FileMode.Create, FileAccess.Write))
+                                    TypeFormatter.Serialize(fs, cache);
+                            }
+                            catch (Exception er)
+                            {
+                                Application.Warning(SeverityFlags.None, "Unable to create '{0}'\n{1}", cacheFile.FullName, er.Message);
+                            }
+                        }
+                        if (cache != null)
+                        {
+                            foreach (CacheItem item in cache.Values)
+                                item.Dispose();
+                        }
+                        return returnCode;
+
+                    }));
+                }
+                finally
+                {
+                    CollectionPool<List<Task<int>>, Task<int>>.Return(tasks);
                 }
                 return true;
             }
             else return false;
+        }
+
+        private static void LoadCache(ValidationCommand sharp, out BuildModuleCache<CacheItem> cache, out FileDescriptor cacheFile)
+        {
+            cacheFile = new FileDescriptor(Application.CacheDirectory.Combine(sharp.Profile.Name), "{0}.sharp", sharp.Name);
+            cache = null;
+            try
+            {
+                if (!cacheFile.Location.Exists())
+                    cacheFile.Location.Create();
+            }
+            catch { }
+            if (cacheFile.Exists())
+            {
+                try
+                {
+                    using (FileStream fs = cacheFile.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
+                        cache = (TypeFormatter.Deserialize(fs, -1, CacheType) as BuildModuleCache<CacheItem>);
+                }
+                catch (Exception er)
+                {
+                    Application.Warning(SeverityFlags.None, "Unable to read '{0}'\n{1}", cacheFile.FullName, er.Message);
+                }
+            }
+            if (cache == null)
+            {
+                cache = new BuildModuleCache<CacheItem>();
+            }
         }
 
         private static bool Lint(Linter linter, FileStream stream, string file)
