@@ -23,8 +23,8 @@ namespace SE.Hecate.VisualStudio
         /// <param name="version">VisualStudio version this project relates to</param>
         /// <param name="projectRoot">The file system ddirectory this project is based on</param>
         /// <param name="name">The name of this project</param>
-        public VisualCppProject(VisualStudioVersion version, PathDescriptor projectRoot, string name)
-            : base(version, new FileDescriptor(projectRoot, "{0}.vcxproj", name))
+        public VisualCppProject(VisualStudioVersion version, PathDescriptor projectRoot, string name, bool isPackage)
+            : base(version, new FileDescriptor(projectRoot, "{0}.vcxproj", name), isPackage)
         { }
     }
 }

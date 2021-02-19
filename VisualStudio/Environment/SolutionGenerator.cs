@@ -44,7 +44,7 @@ namespace SE.Hecate.VisualStudio
             solution.TryGetProperty<BuildProfile>(out profile);
             solution.TryGetProperty<VirtualFileStorage>(out storage);
 
-            string name = PathDescriptor.GetCommonParent(solution.Select(x => x.File.Location));
+            string name = PathDescriptor.GetCommonParent(solution.Where(x => !x.IsPackage).Select(x => x.File.Location));
             if (!string.IsNullOrWhiteSpace(name))
             {
                 name = Path.GetFileName(name);
@@ -149,16 +149,16 @@ namespace SE.Hecate.VisualStudio
             {
                 sw.WriteLine("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"", project.ProjectTypeGuid.ToString("B").ToUpperInvariant(), project.Name, project.File.GetRelativePath(solutionFile.Location), project.ProjectGuid.ToString("B").ToUpperInvariant());
                 {
-                    foreach (VisualStudioProjectTarget target in project.Targets)
-                        if (target.References.Count > 0)
+                    IEnumerable<VisualStudioProject> references = project.Targets.SelectMany(x => x.References).OrderBy(x => x.ProjectGuid).Distinct();
+                    if (references.Any())
+                    {
+                        sw.WriteLine("\tProjectSection(ProjectDependencies) = postProject");
                         {
-                            sw.WriteLine("\tProjectSection(ProjectDependencies) = postProject");
-                            {
-                                foreach (VisualStudioProject dependency in target.References)
-                                    sw.WriteLine("\t\t{0} = {0}", dependency.ProjectGuid.ToString("B").ToUpperInvariant());
-                            }
-                            sw.WriteLine("\tEndProjectSection");
+                            foreach (VisualStudioProject dependency in references)
+                                sw.WriteLine("\t\t{0} = {0}", dependency.ProjectGuid.ToString("B").ToUpperInvariant());
                         }
+                        sw.WriteLine("\tEndProjectSection");
+                    }
                 }
                 sw.WriteLine("EndProject");
             }
@@ -213,38 +213,39 @@ namespace SE.Hecate.VisualStudio
 
         private static void CreateDirectories(IEnumerable<VisualStudioDirectory> directories, FileDescriptor solutionFile, StreamWriter sw)
         {
-            foreach(VisualStudioDirectory directory in directories)
-            {
-                sw.WriteLine("Project(\"{0}\") = \"{1}\", \"{1}\", \"{2}\"", Guid.ParseExact(VisualStudioDirectory.DirectoryGuid, "D").ToString("B").ToUpperInvariant(), directory.Name, directory.Guid.ToString("B").ToUpperInvariant());
+            foreach (VisualStudioDirectory directory in directories)
+                if (directory.Files.Count > 0 || directory.Projects.Count > 0)
                 {
-                    if (directory.Files.Count > 0)
+                    sw.WriteLine("Project(\"{0}\") = \"{1}\", \"{1}\", \"{2}\"", Guid.ParseExact(VisualStudioDirectory.DirectoryGuid, "D").ToString("B").ToUpperInvariant(), directory.Name, directory.Guid.ToString("B").ToUpperInvariant());
                     {
-                        sw.WriteLine("	ProjectSection(SolutionItems) = preProject");
-                        foreach (FileDescriptor file in directory.Files)
+                        if (directory.Files.Count > 0)
                         {
-                            sw.WriteLine("		{0} = {0}", file.GetRelativePath(solutionFile.Location));
+                            sw.WriteLine("	ProjectSection(SolutionItems) = preProject");
+                            foreach (FileDescriptor file in directory.Files)
+                            {
+                                sw.WriteLine("		{0} = {0}", file.GetRelativePath(solutionFile.Location));
+                            }
+                            sw.WriteLine("	EndProjectSection");
                         }
-                        sw.WriteLine("	EndProjectSection");
                     }
+                    sw.WriteLine("EndProject");
                 }
-                sw.WriteLine("EndProject");
-            }
         }
         private static void CreateVirtualProjectTree(IEnumerable<VisualStudioDirectory> directories, StreamWriter sw)
         {
             foreach (VisualStudioDirectory directory in directories)
-            if(directory.Projects.Count > 0)
-            {
-                sw.WriteLine("	GlobalSection(NestedProjects) = preSolution");
+                if (directory.Projects.Count > 0)
                 {
-                    foreach(VisualStudioProject project in directory.Projects)
+                    sw.WriteLine("	GlobalSection(NestedProjects) = preSolution");
                     {
-                        //	e.g. "{Item-GUID} = {Folder-GUID}"
-                        sw.WriteLine("		{0} = {1}", project.ProjectGuid.ToString("B").ToUpperInvariant(), directory.Guid.ToString("B").ToUpperInvariant());
+                        foreach (VisualStudioProject project in directory.Projects)
+                        {
+                            //	e.g. "{Item-GUID} = {Folder-GUID}"
+                            sw.WriteLine("		{0} = {1}", project.ProjectGuid.ToString("B").ToUpperInvariant(), directory.Guid.ToString("B").ToUpperInvariant());
+                        }
                     }
+                    sw.WriteLine("	EndGlobalSection");
                 }
-                sw.WriteLine("	EndGlobalSection");
-            }
         }
     }
 }

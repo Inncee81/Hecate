@@ -14,11 +14,11 @@ namespace SE.Hecate.VisualStudio
     {
         const string DefaultDirectoryName = "Project";
 
-        List<VisualStudioDirectory> directories;
+        Dictionary<string, VisualStudioDirectory> directories;
         /// <summary>
         /// A collection of sub-directories
         /// </summary>
-        public List<VisualStudioDirectory> Directories
+        public Dictionary<string, VisualStudioDirectory> Directories
         {
             get { return directories; }
         }
@@ -29,13 +29,13 @@ namespace SE.Hecate.VisualStudio
         public VirtualFileStorage()
             : base(DefaultDirectoryName)
         {
-            this.directories = new List<VisualStudioDirectory>();
+            this.directories = new Dictionary<string, VisualStudioDirectory>();
         }
 
         public IEnumerator<VisualStudioDirectory> GetEnumerator()
         {
             yield return this;
-            foreach (VisualStudioDirectory directory in directories)
+            foreach (VisualStudioDirectory directory in directories.Values)
                 yield return directory;
         }
         IEnumerator IEnumerable.GetEnumerator()

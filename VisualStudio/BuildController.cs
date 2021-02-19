@@ -9,6 +9,7 @@ using System.Runtime;
 using System.Threading.Tasks;
 using SE.Flex;
 using SE.Hecate.Build;
+using SE.Hecate.Cpp;
 using SE.Hecate.Sharp;
 
 namespace SE.Hecate.VisualStudio
@@ -73,44 +74,82 @@ namespace SE.Hecate.VisualStudio
                 List<object> modules = CollectionPool<List<object>, object>.Get();
                 if (PropertyManager.FindProperties(x => x.Value is BuildModule, modules) > 0)
                 {
-                    BuildCommand build = new BuildCommand
-                    (
-                        command.Template,
-                        modules.Select(x => x as BuildModule)
-                                .Where(x => !x.IsPackage && (x.HasProperty<SharpModule>() ||
-                                                             x.HasProperty<SharpModule>())) //<-- TODO replace with CppModule type
-                    );
-                    bool exit; if (build.Any() && Kernel.Dispatch(build, out exit))
+                    List<Task<int>> tasks = CollectionPool<List<Task<int>>, Task<int>>.Get();
+                    try
                     {
-                        command.Attach(build.Task.ContinueWith<int>((task) =>
+                        if (!Dispatch<SharpModule>(command.Template, ProcessorFamilies.SharpProject, modules, tasks, true))
                         {
-                            build.Release();
+                            return false;
+                        }
+                        else if (!Dispatch<CppModule>(command.Template, ProcessorFamilies.CppProject, modules, tasks, false))
+                        {
+                            return false;
+                        }
+                        else command.Attach(Taskʾ.WhenAll<int>(tasks).ContinueWith<int>((task) =>
+                        {
                             CollectionPool<List<object>, object>.Return(modules);
-
-                            switch (task.Status)
-                            {
-                                case TaskStatus.RanToCompletion: return task.Result;
-                                case TaskStatus.Faulted:
-                                    {
-                                        Application.Error(task.Exception.InnerException);
-                                    }
-                                    goto default;
-                                default: return Application.FailureReturnCode;
-                            }
+                            return KernelMessage.Validate(task);
 
                         }));
-                        return true;
+                        return (tasks.Count > 0);
                     }
-                    else
+                    finally
                     {
-                        build.Release();
-                        CollectionPool<List<object>, object>.Return(modules);
-                        return false;
+                        CollectionPool<List<Task<int>>, Task<int>>.Return(tasks);
                     }
                 }
                 else CollectionPool<List<object>, object>.Return(modules);
             }
             return false;
+        }
+
+        private static bool Dispatch<BuildModuleComponent>(TemplateId template, ProcessorFamilies project, IEnumerable<object> modules, List<Task<int>> tasks, bool excludePackages)
+        {
+            bool hasNonPackageModules = false;
+            BuildCommand build = new BuildCommand
+            (
+                template,
+                project,
+                modules.Select(x => x as BuildModule)
+                        .Where(x => DispatchFilter<BuildModuleComponent>(x, excludePackages, ref hasNonPackageModules))
+            );
+
+            bool exit = false; 
+            if (build.Any() && hasNonPackageModules && Kernel.Dispatch(build, out exit))
+            {
+                tasks.Add(build.Task.ContinueWith<int>((task) =>
+                {
+                    build.Release();
+                    switch (task.Status)
+                    {
+                        case TaskStatus.RanToCompletion: return task.Result;
+                        case TaskStatus.Faulted:
+                            {
+                                Application.Error(task.Exception.InnerException);
+                            }
+                            goto default;
+                        default: return Application.FailureReturnCode;
+                    }
+
+                }));
+                return true;
+            }
+            else
+            {
+                build.Release();
+                return !exit;
+            }
+        }
+
+        private static bool DispatchFilter<BuildModuleComponent>(BuildModule module, bool excludePackages, ref bool hasNonPackageModules)
+        {
+            if (module.IsPackage)
+            {
+                if (excludePackages)
+                    return false;
+            }
+            else hasNonPackageModules = true;
+            return module.HasProperty<BuildModuleComponent>();
         }
     }
 }

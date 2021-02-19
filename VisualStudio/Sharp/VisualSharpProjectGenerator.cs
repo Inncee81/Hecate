@@ -55,40 +55,40 @@ namespace SE.Hecate.VisualStudio
                 #else
                 sw.WriteLine("<Project Sdk="Microsoft.NET.Sdk">");
                 #endif
-
-                CreateHeader(project, profile, sw);
-                sw.WriteLine("  <PropertyGroup>");
                 {
+                    CreateHeader(project, profile, sw);
+                    sw.WriteLine("  <PropertyGroup>");
+                    {
+                        #if NET_FRAMEWORK
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.8' \">net48;NET48;NET_4_8;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.7.2' \">net472;NET472;NET_4_7_2;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.7.1' \">net471;NET471;NET_4_7_1;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.7' \">net47;NET47;NET_4_7;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.6.2' \">net462;NET462;NET_4_6_2;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.6.1' \">net461;NET461;NET_4_6_1;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.6' \">net46;NET46;NET_4_6;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.5.2' \">net452;NET452;NET_4_5_2;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.5.1' \">net451;NET451;NET_4_5_1;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.5' \">net45;NET45;NET_4_5;NET_FRAMEWORK</DefineConstants>");
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.0' \">net40;NET40;NET_4_0;NET_FRAMEWORK</DefineConstants>");
+                        #else
+                        sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFramework)' == 'net5.0' \">net50;NET50;NET_5_0;NET_CORE</DefineConstants>");
+                        #endif
+                    }
+                    sw.WriteLine("  </PropertyGroup>");
+
+                    foreach (VisualStudioProjectTarget target in project.Targets)
+                    {
+                        CreateConfiguration(project, target, profile, target.Configuration.Name.ToTitleCase(), sw);
+                    }
+                        
+                    CreateReferences(project, project.Targets.SelectMany(x => x.Dependencies).Distinct(), project.Targets.SelectMany(x => x.References).Distinct(), sw);
+                    CreateFiles(project, project.Targets.SelectMany(x => x.Files).Distinct(), sw);
+
                     #if NET_FRAMEWORK
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.8' \">net48;NET48;NET_4_8;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.7.2' \">net472;NET472;NET_4_7_2;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.7.1' \">net471;NET471;NET_4_7_1;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.7' \">net47;NET47;NET_4_7;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.6.2' \">net462;NET462;NET_4_6_2;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.6.1' \">net461;NET461;NET_4_6_1;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.6' \">net46;NET46;NET_4_6;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.5.2' \">net452;NET452;NET_4_5_2;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.5.1' \">net451;NET451;NET_4_5_1;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.5' \">net45;NET45;NET_4_5;NET_FRAMEWORK</DefineConstants>");
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFrameworkVersion)' == 'v4.0' \">net40;NET40;NET_4_0;NET_FRAMEWORK</DefineConstants>");
-                    #else
-                    sw.WriteLine("    <DefineConstants Condition=\" '$(TargetFramework)' == 'net5.0' \">net50;NET50;NET_5_0;NET_CORE</DefineConstants>");
+                    sw.WriteLine("  <Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
                     #endif
                 }
-                sw.WriteLine("  </PropertyGroup>");
-
-                foreach (VisualStudioProjectTarget target in project.Targets)
-                {
-                    CreateConfiguration(project, target, profile, target.Configuration.Name.ToTitleCase(), sw);
-                }
-                        
-                CreateReferences(project, project.Targets.SelectMany(x => x.Dependencies).Distinct(), project.Targets.SelectMany(x => x.References).Distinct(), sw);
-                CreateFiles(project, project.Targets.SelectMany(x => x.Files).Distinct(), sw);
-
-                #if NET_FRAMEWORK
-                sw.WriteLine("  <Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
-                #endif
-
                 sw.WriteLine("</Project>");
                 sw.Flush();
             }
@@ -186,12 +186,12 @@ namespace SE.Hecate.VisualStudio
 
                 sw.Write("    <DefineConstants>$(DefineConstants)");
                 {
-                    IEnumerator<string> define = target.Configuration.Defines.Keys.GetEnumerator();
-                    for (int i = 0; define.MoveNext(); i++)
-                    {
-                        sw.Write(";");
-                        sw.Write(define.Current);
-                    }
+                    foreach (string define in target.Configuration.Defines.Keys)
+                        if (!string.IsNullOrWhiteSpace(define))
+                        {
+                            sw.Write(";");
+                            sw.Write(define);
+                        }
                 }
                 sw.WriteLine("</DefineConstants>");
                 sw.WriteLine("    <PlatformTarget>{0}</PlatformTarget>", profile.Target);

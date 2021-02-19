@@ -20,8 +20,8 @@ namespace SE.Hecate.VisualStudio
         /// <summary>
         /// Creates a new message instance from the provided set of modules
         /// </summary>
-        public BuildCommand(TemplateId template, IEnumerable<BuildModule> modules)
-            : base(template | (UInt32)ProcessorFamilies.Project, Application.ProjectRoot)
+        public BuildCommand(TemplateId template, ProcessorFamilies project, IEnumerable<BuildModule> modules)
+            : base(template | (UInt32)project, Application.ProjectRoot)
         {
             this.modules = modules;
         }

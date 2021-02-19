@@ -55,16 +55,6 @@ namespace SE.Hecate.VisualStudio
             get { return targets; }
         }
 
-        PathDescriptor outputPath;
-        /// <summary>
-        /// The local file system directory path this project is deployed to
-        /// </summary>
-        public PathDescriptor OutputPath
-        {
-            get { return outputPath; }
-            set { outputPath = value; }
-        }
-
         /// <summary>
         /// Implemented in an inherited class, determines the specific project GUID of
         /// this project instance
@@ -92,13 +82,24 @@ namespace SE.Hecate.VisualStudio
             get { return version; }
         }
 
+        bool isPackage;
+        /// <summary>
+        /// Determines if this project was build from a package code module
+        /// </summary>
+        public bool IsPackage
+        {
+            get { return isPackage; }
+        }
+
         /// <summary>
         /// Creates a new project instance
         /// </summary>
-        public VisualStudioProject(VisualStudioVersion version, FileDescriptor file)
+        public VisualStudioProject(VisualStudioVersion version, FileDescriptor file, bool isPackage)
         {
             this.file = file;
             this.version = version;
+            this.isPackage = isPackage;
+
             LoadGuid();
         }
 

@@ -11,7 +11,8 @@ namespace SE.Hecate.VisualStudio
     /// </summary>
     public enum ProcessorFamilies
     {
-        Project = (SE.Hecate.ProcessorFamilies.Custom + 32),
+        SharpProject = (SE.Hecate.ProcessorFamilies.Custom + 32),
+        CppProject,
         VisualSharp,
         VisualCpp,
         Solution

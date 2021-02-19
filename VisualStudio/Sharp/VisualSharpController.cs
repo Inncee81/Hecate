@@ -17,7 +17,7 @@ namespace SE.Hecate.VisualStudio
     /// Pipeline node to perform VisuaStudio C# project preparations
     /// </summary>
     [ProcessorUnit(IsBuiltIn = true)]
-    public class CompileController : ProcessorUnit
+    public class VisualSharpController : ProcessorUnit
     {
         public override PathDescriptor Target
         {
@@ -29,13 +29,13 @@ namespace SE.Hecate.VisualStudio
         }
         public override UInt32 Family
         {
-            get { return (UInt32)ProcessorFamilies.Project; }
+            get { return (UInt32)ProcessorFamilies.SharpProject; }
         }
 
         /// <summary>
         /// Creates a new node instance
         /// </summary>
-        public CompileController()
+        public VisualSharpController()
         { }
 
         private async static Task<int> Process(BuildCommand modules)

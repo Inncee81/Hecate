@@ -45,7 +45,7 @@ namespace SE.Hecate.VisualStudio
         /// <param name="projectRoot">The file system ddirectory this project is based on</param>
         /// <param name="name">The name of this project</param>
         public VisualSharpProject(VisualStudioVersion version, PathDescriptor projectRoot, string name)
-            : base(version, new FileDescriptor(projectRoot, "{0}.csproj", name))
+            : base(version, new FileDescriptor(projectRoot, "{0}.csproj", name), false)
         {
             packages = new HashSet<BuildModule>();
         }
