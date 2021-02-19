@@ -1,0 +1,33 @@
+﻿{
+    "name": "@schroedingerentertainment/se.hecate.cpp",
+    "description": "Hecate C++ Language Extension",
+    "homepage": "https://github.com/SchroedingerEntertainment/Hecate",
+    "license": "AGPL-3.0-or-later",
+    "version": "1.0.0",
+    "dependencies": {
+        "@schroedingerentertainment/se.apollo.package": "^1.0.0",
+        "@schroedingerentertainment/se.sharp.command-line": "^1.0.0",
+        "@schroedingerentertainment/se.sharp.common": "^1.1.0",
+        "@schroedingerentertainment/se.sharp.flex": "^1.1.0",
+        "@schroedingerentertainment/se.sharp.parsing": "^1.0.0",
+        "@schroedingerentertainment/se.sharp.cpp-lang": "^1.0.0"
+    },
+    "peerdependencies": {
+        "@schroedingerentertainment/se.hecate.hqt": "^1.1.0"
+    },
+    "keywords": [
+        "C#",
+        "sharp",
+        "csharp",
+        "hecate"
+    ],
+    "author": {
+        "name": "Shaarigan",
+        "url": "https://github.com/Shaarigan"
+    },
+    "repository": {
+        "url": "https://github.com/SchroedingerEntertainment/Hecate.git",
+        "type": "git",
+        "directory": "Cpp"
+    }
+}
