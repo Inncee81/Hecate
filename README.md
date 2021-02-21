@@ -100,8 +100,9 @@ editor script in the development environment
 
 ## How to Build
 
-Hecate is a modular software project, which means that it is assembled from a number of required and optional components. It is
-required to create a defined directory structure first, so that a directory named **Config** marks the top of the SDK structure.
+Hecate is a modular software project, which means that it is assembled from a number of required and optional components. It can
+be downloaded from our [Quickstart Build](https://github.com/SchroedingerEntertainment/Hecate/releases/download/quickstart/Quickstart.zip) 
+or else is required to create a defined directory structure first, so that a directory named **Config** marks the top of the SDK structure.
 Hecate is created out of a primary package
 
 * [se.hecate.hqt](https://github.com/SchroedingerEntertainment/Hecate/packages/622485)
