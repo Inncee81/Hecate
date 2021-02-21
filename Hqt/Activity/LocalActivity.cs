@@ -56,6 +56,7 @@ namespace SE.Hecate
                         }
                         Application.Error(SeverityFlags.None, "Failed to process command");
                     }
+                    else return entryPoint.Await();
                 }
                 return Application.GetReturnCode();
             }
