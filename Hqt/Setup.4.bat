@@ -8,7 +8,7 @@ if not exist %dotNet%nul goto WIN_ERROR
 setlocal
 cd /d %~dp0
 
-"%dotNet%csc.exe" @"Setup.inc"
+"%dotNet%csc.exe" @"Setup.4.inc"
 if %ERRORLEVEL% neq 0 goto EXIT
 goto EXIT
 

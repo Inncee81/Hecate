@@ -48,7 +48,7 @@ namespace SE.Hecate.Sharp
 
         protected override ProductionState Process(SharpToken value)
         {
-            if (linter.Scope > 0)
+            if (linter.Scope >= 2)
             {
                 switch (State)
                 {

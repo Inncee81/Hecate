@@ -151,7 +151,11 @@ namespace SE.Hecate.Build
                     setup.SetProperty(profile);
                 }
                 Application.Log(SeverityFlags.Full, "Loading profile {0}", profile.Name);
-                LoadBuildProfile(profile);
+                if (!SetupController.LoadSettings(profile.Name, profile))
+                {
+                    Application.Warning(SeverityFlags.None, "Build profile '{0}' not found, loading default instead", profile.Name);
+                }
+                profile.AddDefaultValues();
                 #endregion
 
                 #region Build Modules
@@ -271,36 +275,6 @@ namespace SE.Hecate.Build
                 return true;
             }
             else return false;
-        }
-
-        private static bool LoadBuildProfile(BuildProfile profile)
-        {
-            string name = profile.Name;
-            if (string.IsNullOrWhiteSpace(Path.GetExtension(name)))
-            {
-                name = string.Concat(name, ".*");
-            }
-            FileDescriptor configFile; if (Application.ConfigDirectory.FindFile(name, out configFile, PathSeekOptions.RootLevel))
-            {
-                IPropertyProvider settings; if (configFile.GetProperties(Application.LogSystem, out settings))
-                {
-                    PropertyMapper.Assign(profile, settings, true, true);
-                }
-                else return false;
-            }
-            else if (Application.ConfigDirectory != Application.SdkConfig && Application.SdkConfig.FindFile(name, out configFile, PathSeekOptions.RootLevel))
-            {
-                IPropertyProvider settings; if (configFile.GetProperties(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>(SetupController.GlobalDefine, "1") }, Application.LogSystem, out settings))
-                {
-                    PropertyMapper.Assign(profile, settings, true, true);
-                }
-                else return false;
-            }
-            else Application.Warning(SeverityFlags.None, "Build profile '{0}' not found, loading default instead", name);
-            profile.AddDefaultValues();
-            
-            PropertyMapper.Assign(profile, CommandLineOptions.Default, true, true);
-            return true;
         }
 
         private static void LoadPackages(BuildCommand setup, List<FileSystemDescriptor> directories)

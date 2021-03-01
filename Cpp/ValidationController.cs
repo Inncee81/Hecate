@@ -161,13 +161,16 @@ namespace SE.Hecate.Cpp
                         }
                         tasks.Add(Process(modules, module, profile, isValidCppModuleFlag));
                     }
-                    command.Attach(Taskʾ.WhenAll<int>(tasks)
-                                        .ContinueWith<int>((task) =>
-                                        {
-                                            CollectionPool<List<object>, object>.Return(modules);
-                                            return KernelMessage.Validate(task);
+                    command.Attach(Taskʾ.WhenAll<int>(tasks).ContinueWith<int>((task) =>
+                    {
+                        if (isValidCppModuleFlag.Task.Result)
+                        {
+                            SE.Hecate.SetupController.LoadSettings<BuildParameter>("Cpp", profile.Platform.ToUpperInvariant(), profile.Target.ToString().ToUpperInvariant());
+                        }
+                        CollectionPool<List<object>, object>.Return(modules);
+                        return KernelMessage.Validate(task);
 
-                                        }));
+                    }));
                 }
                 finally
                 {

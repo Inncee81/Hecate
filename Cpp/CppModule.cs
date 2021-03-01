@@ -49,7 +49,7 @@ namespace SE.Hecate.Cpp
             this.settings = new Dictionary<string, CppModuleSettings>();
             this.files = new HashSet<FileDescriptor>();
             BuildConfiguration @default = profile.Default;
-            if (!BuildParameter.Fast)
+            if (!Build.BuildParameter.Fast)
             {
                 foreach (BuildConfiguration config in profile.Configurations)
                 {

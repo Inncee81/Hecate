@@ -113,9 +113,9 @@ namespace SE.Hecate.VisualStudio
             {
                 sw.WriteLine("    <ProjectGuid>{0}</ProjectGuid>", project.ProjectGuid.ToString("B").ToUpperInvariant());
                 
-                if (VisualCppCommand.WindowsSDK != null)
+                if (Cpp.BuildParameter.SdkVersion != null)
                 {
-                    sw.WriteLine("    <WindowsTargetPlatformVersion>{0}</WindowsTargetPlatformVersion>", VisualCppCommand.WindowsSDK);
+                    sw.WriteLine("    <WindowsTargetPlatformVersion>{0}</WindowsTargetPlatformVersion>", Cpp.BuildParameter.SdkVersion);
                 }
             }
             sw.WriteLine("  </PropertyGroup>");

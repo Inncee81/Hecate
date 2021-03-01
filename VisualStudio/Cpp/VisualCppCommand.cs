@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using SE.Flex;
 using SE.Hecate.Build;
-using SE.Hecate.Cpp;
 
 namespace SE.Hecate.VisualStudio
 {
@@ -14,15 +13,6 @@ namespace SE.Hecate.VisualStudio
     /// </summary>
     public class VisualCppCommand : KernelMessage
     {
-        private static string windowsSDK = string.Empty;
-        /// <summary>
-        /// Gets the version string of the latest Windows SDK installed
-        /// </summary>
-        public static string WindowsSDK
-        {
-            get { return windowsSDK; }
-        }
-
         VisualCppProject project;
         /// <summary>
         /// The Cpp project instance attached to this action
@@ -41,20 +31,6 @@ namespace SE.Hecate.VisualStudio
             get { return profile; }
         }
 
-        static VisualCppCommand()
-        {
-            #if _WIN32
-            try
-            {
-                Version ver; if (VisualCppEnvironment.FindLatestWindowsSdk(out ver) != null && ver.Major >= 10)
-                {
-                    windowsSDK = ver.ToString();
-                }
-            }
-            catch
-            { }
-            #endif
-        }
         /// <summary>
         /// Creates a new message instance from the provided Cpp files
         /// </summary>

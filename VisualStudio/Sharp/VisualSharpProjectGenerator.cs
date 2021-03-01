@@ -53,7 +53,7 @@ namespace SE.Hecate.VisualStudio
                 #if NET_FRAMEWORK
                 sw.WriteLine("<Project ToolsVersion=\"{0}\" DefaultTargets=\"{1}\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">", project.Version.ToolsVersion(), "Build");
                 #else
-                sw.WriteLine("<Project Sdk="Microsoft.NET.Sdk">");
+                sw.WriteLine("<Project Sdk=\"Microsoft.NET.Sdk\">");
                 #endif
                 {
                     CreateHeader(project, profile, sw);
@@ -113,6 +113,7 @@ namespace SE.Hecate.VisualStudio
                 sw.WriteLine("    <ProjectGuid>{0}</ProjectGuid>", project.ProjectGuid.ToString("B").ToUpperInvariant());
 
                 #if !NET_FRAMEWORK
+                sw.WriteLine("    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>");
                 sw.WriteLine("    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>");
                 sw.WriteLine("    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>");
                 sw.WriteLine("    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>");
@@ -202,8 +203,13 @@ namespace SE.Hecate.VisualStudio
         {
             sw.WriteLine("  <ItemGroup>");
             {
+                #if !NET_FRAMEWORK
+                PathDescriptor sdkAssemblyPath = Sharp.BuildParameter.Dotnet.Combine("Microsoft.NETCore.App");
+                #endif
+
                 foreach (FileDescriptor dependency in dependencies)
                 {
+                    #if NET_FRAMEWORK
                     if (!AssemblyCache.ReferenceAssemblies.Contains(dependency.Location) && !AssemblyCache.ReferenceAssembliesAlternative.Contains(dependency.Location))
                     {
                         sw.WriteLine("    <Reference Include=\"{0}\">", dependency.Name);
@@ -211,6 +217,14 @@ namespace SE.Hecate.VisualStudio
                         sw.WriteLine("    </Reference>");
                     }
                     else sw.WriteLine("    <Reference Include=\"{0}\" />", dependency.Name);
+                    #else
+                    if(!sdkAssemblyPath.Contains(dependency.Location))
+                    {
+                        sw.WriteLine("    <Reference Include=\"{0}\">", dependency.Name);
+                        sw.WriteLine("    <HintPath>{0}</HintPath>", dependency.GetRelativePath(project.File));
+                        sw.WriteLine("    </Reference>");
+                    }
+                    #endif
                 }
                 foreach (VisualStudioProject reference in references)
                 {

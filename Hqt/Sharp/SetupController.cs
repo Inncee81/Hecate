@@ -66,10 +66,10 @@ namespace SE.Hecate.Sharp
 
         public override bool Process(KernelMessage command)
         {
-            if (CommandLineOptions.Default.ContainsKey("csc"))
+            if (CommandLineOptions.Default.ContainsKey("csc") || CommandLineOptions.Default.ContainsKey("publish"))
             {
-                PropertyMapper.Assign<CompileParameter>(CommandLineOptions.Default, true, true);
-                if (!string.IsNullOrWhiteSpace(CompileParameter.Profile))
+                PropertyMapper.Assign<BuildParameter>(CommandLineOptions.Default, true, true);
+                if (!string.IsNullOrWhiteSpace(BuildParameter.Profile))
                 {
                     if (command.HasProperty<BuildProfile>())
                     {
@@ -77,21 +77,7 @@ namespace SE.Hecate.Sharp
                         Kernel.Exit();
                         return false;
                     }
-                    else command.SetProperty(new BuildProfile(CompileParameter.Profile));
-                }
-            }
-            if (CommandLineOptions.Default.ContainsKey("publish"))
-            {
-                PropertyMapper.Assign<PublishParameter>(CommandLineOptions.Default, true, true);
-                if (!string.IsNullOrWhiteSpace(PublishParameter.Profile))
-                {
-                    if (command.HasProperty<BuildProfile>())
-                    {
-                        Application.Error(SeverityFlags.None, "Build profile is ambiguous");
-                        Kernel.Exit();
-                        return false;
-                    }
-                    else command.SetProperty(new BuildProfile(PublishParameter.Profile));
+                    else command.SetProperty(new BuildProfile(BuildParameter.Profile));
                 }
             }
             return true;

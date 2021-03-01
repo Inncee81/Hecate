@@ -18,9 +18,8 @@ namespace SE.Hecate.Sharp
     //------------------------------------------------------------------------------
     public partial class AssemblyCache
     {
-
-        const string ReferenceAssemblyPath = "%ProgramFiles(x86)%/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.8";
-        const string ReferenceAssembliesAlternativePath = "%ProgramFiles%/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.8";
+        const string ReferenceAssemblyPath = "%ProgramFiles%/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.8";
+        const string ReferenceAssembliesAlternativePath = "%ProgramFiles(x86)%/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.8";
 
         private static void PopulateFrameworkAssemblyList(HashSet<string> frameworkAssemblies)
         {

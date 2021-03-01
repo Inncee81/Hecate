@@ -49,7 +49,7 @@ namespace SE.Hecate.Sharp
             this.settings = new Dictionary<string, SharpModuleSettings>();
             this.files = new HashSet<FileDescriptor>();
             BuildConfiguration @default = profile.Default;
-            if (!BuildParameter.Fast)
+            if (!Build.BuildParameter.Fast)
             {
                 foreach (BuildConfiguration config in profile.Configurations)
                 {

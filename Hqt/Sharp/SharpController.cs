@@ -83,7 +83,7 @@ namespace SE.Hecate.Sharp
                             cache.Add(file, item);
                         }
                     }
-                    else hasCache = !BuildParameter.Rebuild;
+                    else hasCache = !Build.BuildParameter.Rebuild;
                 }
                 #endregion
 

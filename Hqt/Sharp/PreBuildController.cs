@@ -24,7 +24,7 @@ namespace SE.Hecate.Sharp
         private readonly static string[] WpfAssemblies = new string[]
         {
             "PresentationCore",
-            "PresentationFrameword",
+            "PresentationFramework",
             "WindowsBase",
             "System.Xaml",
         };
@@ -76,12 +76,12 @@ namespace SE.Hecate.Sharp
         public void OnCompleted()
         { }
 
-        private static void ProcessFirstPass(BuildModule module, SharpModuleSettings sharp, List<object> modules)
+        private static async Task ProcessFirstPass(BuildModule module, SharpModuleSettings sharp, List<object> modules)
         {
             PackageMeta packageInfo; if (module.TryGetProperty<PackageMeta>(out packageInfo))
             {
                 #region package.json
-                modules.ForEach((x) =>
+                await modules.ParallelFor((x) =>
                 {
                     if (x == module)
                         return;
@@ -102,7 +102,7 @@ namespace SE.Hecate.Sharp
                                     goto AddDependency;
                                 }
                         }
-                        if (!BuildParameter.Fast)
+                        if (!Build.BuildParameter.Fast)
                         {
                             SharpModuleSettings conf; if (sharpDep.Settings.TryGetValue(sharp.Name, out conf))
                             {
@@ -128,7 +128,7 @@ namespace SE.Hecate.Sharp
             else
             {
                 #region Linking
-                modules.ForEach((x) =>
+                await modules.ParallelFor((x) =>
                 {
                     if (x == module)
                         return;
@@ -153,13 +153,22 @@ namespace SE.Hecate.Sharp
                 });
                 #endregion
             }
-            foreach (string namespaceName in sharp.UsingDirectives)
+            List<Task> tasks = CollectionPool<List<Task>, Task>.Get();
+            try
             {
-                AssemblyCache.GetAssemblies(sharp, namespaceName);
-                if (namespaceName.Equals(WinFormsAssembly) && sharp.AssemblyType == BuildModuleType.Console)
+                foreach (string namespaceName in sharp.UsingDirectives)
                 {
-                    sharp.AssemblyType = BuildModuleType.Executable;
+                    tasks.Add(AssemblyCache.GetAssemblies(sharp, namespaceName));
+                    if (namespaceName.Equals(WinFormsAssembly) && sharp.AssemblyType == BuildModuleType.Console)
+                    {
+                        sharp.AssemblyType = BuildModuleType.Executable;
+                    }
                 }
+                await Taskʾ.WhenAll(tasks);
+            }
+            finally
+            {
+                CollectionPool<List<Task>, Task>.Return(tasks);
             }
             if (sharp.AssemblyType == BuildModuleType.Console && sharp.UsingDirectives.Intersect(WpfAssemblies).Count() == WpfAssemblies.Length)
             {
@@ -246,7 +255,7 @@ namespace SE.Hecate.Sharp
                         SharpModule sharp; if (module.TryGetProperty<SharpModule>(out sharp))
                         {
                             foreach(SharpModuleSettings conf in sharp.Settings.Values)
-                                tasks.Add(Taskʾ.Run(() => ProcessFirstPass(module, conf, modules)));
+                                tasks.Add(ProcessFirstPass(module, conf, modules));
                         }
                     }
                     command.Attach

@@ -121,8 +121,8 @@ namespace SE.Hecate.Packages
                     {
                         if (!string.IsNullOrWhiteSpace(package.Value.License) && PackageManager.AcceptedLicenses.Contains(package.Value.License))
                         {
-                            if (!await InstallFromCache(package.Value, cachePackage))
-                                await InstallFromRepository(connection, package.Value);
+                            if (!await InstallFromCache(target, package.Value, cachePackage))
+                                await InstallFromRepository(connection, target, package.Value);
                         }
                         else Application.Error(SeverityFlags.None, "Invalid license '{0}' in package {1}", package.Value.License, package.Value.FriendlyName(false));
                     }
@@ -241,7 +241,7 @@ namespace SE.Hecate.Packages
             }   
             return Any<PackageMeta>.Empty;
         }
-        private static async Task<bool> InstallFromCache(PackageMeta package, bool cachePackage)
+        private static async Task<bool> InstallFromCache(PackageTarget target, PackageMeta package, bool cachePackage)
         {
             PathDescriptor cacheDirectory = Application.CacheDirectory.Combine(CachePrefix);
             FileDescriptor packageFile = FileDescriptor.Create(cacheDirectory, string.Concat(package.FriendlyName(false), ".json"));
@@ -282,7 +282,7 @@ namespace SE.Hecate.Packages
                 try
                 {
                     if (packageFile.Exists())
-                        return await Install(package, packageFile);
+                        return await Install(target, package, packageFile);
                 }
                 finally
                 {
@@ -292,7 +292,7 @@ namespace SE.Hecate.Packages
             return false;
         }
 
-        private static async Task<bool> InstallFromRepository(HttpClient connection, PackageMeta package)
+        private static async Task<bool> InstallFromRepository(HttpClient connection, PackageTarget target, PackageMeta package)
         {
             FileDescriptor packageFile = FileDescriptor.Create(Application.CacheDirectory.Combine(CachePrefix), string.Concat(package.FriendlyName(false), ".pkg"));
             using (NamedReadWriteLock packageLock = packageFile.GetLock())
@@ -324,7 +324,7 @@ namespace SE.Hecate.Packages
                 try
                 {
                     if (packageFile.Exists())
-                        return await Install(package, packageFile);
+                        return await Install(target, package, packageFile);
                 }
                 finally
                 {
@@ -334,7 +334,7 @@ namespace SE.Hecate.Packages
             Application.Error(SeverityFlags.None, "{0} does not exist", packageFile.FullName);
             return false;
         }
-        private static async Task<bool> Install(PackageMeta package, FileDescriptor packageContent)
+        private static async Task<bool> Install(PackageTarget target, PackageMeta package, FileDescriptor packageContent)
         {
             PathDescriptor packageLocation = Application.SdkRoot;
             PackageManager.GetLocation(package, ref packageLocation);
@@ -351,7 +351,21 @@ namespace SE.Hecate.Packages
                 await packageLock.LockAsync();
                 try
                 {
-                    if (!packageLocation.Exists() || InstallParameter.Force)
+                    bool install = (!packageLocation.Exists() || InstallParameter.Force);
+                    if (install && target.IsDependency)
+                    {
+                        FileDescriptor packageFile; if (packageLocation.FindFile("package.json", out packageFile, PathSeekOptions.RootLevel))
+                        {
+                            #region Package File
+                            PackageMeta pkg; if (packageFile.GetPackage(Application.LogSystem, out pkg) && target.Id.Equals(pkg.Id) && (target.Version == 0 || target.Version.Match(pkg.Version)))
+                            {
+                                package = pkg;
+                                install = false;
+                            }
+                            #endregion
+                        }
+                    }
+                    if (install)
                     {
                         Application.Log(SeverityFlags.Full, "Installing {0}", package.FriendlyName(false));
 
@@ -425,19 +439,19 @@ namespace SE.Hecate.Packages
                                         {
                                             case TarEntryType.Directory:
                                                 {
-                                                    PathDescriptor target = packageLocation.Combine(name);
-                                                    if (!target.Exists())
-                                                        target.Create();
+                                                    PathDescriptor t = packageLocation.Combine(name);
+                                                    if (!t.Exists())
+                                                        t.Create();
                                                 }
                                                 break;
                                             case TarEntryType.File:
                                                 {
-                                                    FileDescriptor target = FileDescriptor.Create(packageLocation, name);
-                                                    if (!target.Location.Exists())
+                                                    FileDescriptor t = FileDescriptor.Create(packageLocation, name);
+                                                    if (!t.Location.Exists())
                                                     {
-                                                        target.Location.Create();
+                                                        t.Location.Create();
                                                     }
-                                                    using (FileStream fs = target.Open(FileMode.Create, FileAccess.Write))
+                                                    using (FileStream fs = t.Open(FileMode.Create, FileAccess.Write))
                                                         tar.CopyRange(fs, (int)item.Size);
                                                 }
                                                 break;
@@ -454,7 +468,7 @@ namespace SE.Hecate.Packages
 
                         Application.Log(SeverityFlags.Minimal, "Installed {0}", package.FriendlyName(false));
                     }
-                    else Application.Log(SeverityFlags.Minimal, "{0} is up to date", package.FriendlyName(false));
+                    else Application.Log(target.IsDependency ? SeverityFlags.Full : SeverityFlags.Minimal, "{0} is up to date", package.FriendlyName(false));
 
                     #region Dependencies
                     Application.Log(SeverityFlags.Full, "Checking {0} dependencies", package.FriendlyName(false));

@@ -132,7 +132,7 @@ namespace SE.Hecate.Cpp
                             cache.Add(file, item);
                         }
                     }
-                    else hasCache = !BuildParameter.Rebuild;
+                    else hasCache = !Build.BuildParameter.Rebuild;
                 }
                 #endregion
 

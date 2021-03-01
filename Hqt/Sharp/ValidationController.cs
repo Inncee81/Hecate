@@ -160,6 +160,74 @@ namespace SE.Hecate.Sharp
                         }
                         command.Attach(Process(module, profile, isValidSharpModuleFlag));
                     }
+                    command.Attach(isValidSharpModuleFlag.Task.ContinueWith<int>((task) =>
+                    {
+                        if (task.Result)
+                        {
+                            SE.Hecate.SetupController.LoadSettings<BuildParameter>
+                            (
+                                "Sharp", 
+                                profile.Platform.ToUpperInvariant(), 
+                                profile.Target.ToString().ToUpperInvariant()
+
+                                #if NET_FRAMEWORK
+                                #if net40
+                                ,"net40"
+                                ,"NET40"
+                                ,"NET_4_0"
+                                #elif net45
+                                ,"net45"
+                                ,"NET45"
+                                ,"NET_4_5"
+                                #elif net451
+                                ,"net451"
+                                ,"NET451"
+                                ,"NET_4_5_1"
+                                #elif net452
+                                ,"net452"
+                                ,"NET452"
+                                ,"NET_4_5_2"
+                                #elif net46
+                                ,"net46"
+                                ,"NET46"
+                                ,"NET_4_6"
+                                #elif net461
+                                ,"net461"
+                                ,"NET461"
+                                ,"NET_4_6_1"
+                                #elif net462
+                                ,"net462"
+                                ,"NET462"
+                                ,"NET_4_6_2"
+                                #elif net47
+                                ,"net47"
+                                ,"NET47"
+                                ,"NET_4_7"
+                                #elif net471
+                                ,"net471"
+                                ,"NET471"
+                                ,"NET_4_7_1"
+                                #elif net472
+                                ,"net472"
+                                ,"NET472"
+                                ,"NET_4_7_2"
+                                #elif net48
+                                ,"net48"
+                                ,"NET48"
+                                ,"NET_4_8"
+                                #endif
+                                ,"NET_FRAMEWORK"
+                                #else
+                                ,"net50"
+                                ,"NET50"
+                                ,"NET_5_0"
+                                ,"NET_CORE"
+                                #endif
+                            );
+                        }
+                        return Application.SuccessReturnCode;
+
+                    }));
                     return true;
                 }
             }

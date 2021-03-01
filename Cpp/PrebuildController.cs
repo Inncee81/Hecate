@@ -93,7 +93,7 @@ namespace SE.Hecate.Cpp
                                     goto AddDependency;
                                 }
                         }
-                        if (!BuildParameter.Fast)
+                        if (!Build.BuildParameter.Fast)
                         {
                             foreach (FileDescriptor includeTarget in cpp.IncludeDirectives)
                                 if (cppDep.Files.Contains(includeTarget))
