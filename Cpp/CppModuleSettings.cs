@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SE.Apollo.Package;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Cpp
@@ -143,6 +144,28 @@ namespace SE.Hecate.Cpp
         public string GetDeploymentPath(PathDescriptor moduleTarget, string family)
         {
             return config.GetDeploymentPath(moduleTarget, family);
+        }
+
+        /// <summary>
+        /// Tests dependencies against package metadata and removes them if outdated
+        /// </summary>
+        /// <param name="meta">The package metadata to test against</param>
+        /// <returns>True if a more recent package already exists, false otherwise</returns>
+        public bool AvaragePackageExists(PackageMeta meta)
+        {
+            foreach (BuildModule dependency in dependencies)
+            {
+                PackageMeta pkg; if (dependency.TryGetProperty<PackageMeta>(out pkg) && pkg.Id.Equals(meta.Id))
+                {
+                    if (pkg.Version < meta.Version)
+                    {
+                        dependencies.Remove(dependency);
+                        break;
+                    }
+                    else return true;
+                }
+            }
+            return false;
         }
     }
 }

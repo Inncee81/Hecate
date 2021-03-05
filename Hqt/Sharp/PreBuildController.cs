@@ -91,6 +91,10 @@ namespace SE.Hecate.Sharp
                     {
                         PackageMeta pkg; if (dependency.TryGetProperty<PackageMeta>(out pkg))
                         {
+                            if (packageInfo.Id.Equals(pkg.Id))
+                            {
+                                return;
+                            }
                             foreach (PackageVersion version in pkg.References.Where(d => d.Key.Match(packageInfo.Id)).Select(d => d.Value))
                                 if (version.Match(packageInfo.Version))
                                 {
@@ -119,7 +123,8 @@ namespace SE.Hecate.Sharp
                     AddDependency:
                         lock (sharp.Dependencies)
                         {
-                            sharp.Dependencies.Add(dependency);
+                            if(!sharp.AvaragePackageExists(pkg))
+                                sharp.Dependencies.Add(dependency);
                         }
                     }
                 });
@@ -144,7 +149,10 @@ namespace SE.Hecate.Sharp
                                     {
                                         lock (sharp.Dependencies)
                                         {
-                                            sharp.Dependencies.Add(dependency);
+                                            PackageMeta pkg; if (!dependency.TryGetProperty<PackageMeta>(out pkg) || !sharp.AvaragePackageExists(pkg))
+                                            {
+                                                sharp.Dependencies.Add(dependency);
+                                            }
                                         }
                                         return;
                                     }

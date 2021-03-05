@@ -3,7 +3,7 @@
     "description": "Hecate C++ Language Extension",
     "homepage": "https://github.com/SchroedingerEntertainment/Hecate",
     "license": "AGPL-3.0-or-later",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "dependencies": {
         "@schroedingerentertainment/se.apollo.package": "^1.0.0",
         "@schroedingerentertainment/se.sharp.command-line": "^1.0.0",

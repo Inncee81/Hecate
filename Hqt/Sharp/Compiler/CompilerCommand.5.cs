@@ -45,26 +45,26 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public void Finalize(StreamWriter stream)
         {
-            stream.WriteLine("/nologo");
-            //stream.WriteLine("/parallel");
+            stream.WriteLine("-nologo");
+            stream.WriteLine("-parallel");
 
             switch (type)
             {
-                case BuildModuleType.Console: stream.WriteLine("/target:exe"); break;
-                case BuildModuleType.Executable: stream.WriteLine("/target:winexe"); break;
-                default: stream.WriteLine("/target:library"); break;
+                case BuildModuleType.Console: stream.WriteLine("-target:exe"); break;
+                case BuildModuleType.Executable: stream.WriteLine("-target:winexe"); break;
+                default: stream.WriteLine("-target:library"); break;
             }
             switch (profile.Target)
             {
-                case PlatformTarget.Any: stream.WriteLine("/platform:anycpu"); break;
-                case PlatformTarget.Arm: stream.WriteLine("/platform:ARM"); break;
-                case PlatformTarget.x86: stream.WriteLine("/platform:x86"); break;
-                case PlatformTarget.Arm64: stream.WriteLine("/platform:ARM64"); break;
+                case PlatformTarget.Any: stream.WriteLine("-platform:anycpu"); break;
+                case PlatformTarget.Arm: stream.WriteLine("-platform:ARM"); break;
+                case PlatformTarget.x86: stream.WriteLine("-platform:x86"); break;
+                case PlatformTarget.Arm64: stream.WriteLine("-platform:ARM64"); break;
                 case PlatformTarget.x64: 
-                default: stream.WriteLine("/platform:x64"); break;
+                default: stream.WriteLine("-platform:x64"); break;
             }
 
-            stream.Write("/define:__hqt__");
+            stream.Write("-define:__hqt__");
 
             #if net50
             stream.Write(";net50");
@@ -83,18 +83,18 @@ namespace SE.Hecate.Sharp
             {
                 if (config.DebugSymbols)
                 {
-                    stream.WriteLine("/debug:pdbonly");
+                    stream.WriteLine("-debug:pdbonly");
                 }
-                stream.WriteLine("/optimize");
+                stream.WriteLine("-optimize");
             }
-            else stream.WriteLine("/debug");
+            else stream.WriteLine("-debug");
             if (WarningAsError)
             {
-                stream.WriteLine("/warnaserror");
+                stream.WriteLine("-warnaserror");
             }
-            stream.WriteLine("/warn:4");
-            stream.WriteLine("/langversion:latest");
-            stream.WriteLine("/out:\"{0}\"", outputAssembly.GetRelativePath(Application.WorkerPath));
+            stream.WriteLine("-warn:4");
+            stream.WriteLine("-langversion:latest");
+            stream.WriteLine("-out:\"{0}\"", outputAssembly.GetRelativePath(Application.WorkerPath));
 
             List<FileSystemDescriptor> coreAssemblies = CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Get();
             try
@@ -102,7 +102,7 @@ namespace SE.Hecate.Sharp
                 if (BuildParameter.Dotnet.FindFiles("Microsoft.NETCore.App/5.*/System.Private.*.dll", coreAssemblies) > 0)
                 {
                     foreach (FileSystemDescriptor coreAssembly in coreAssemblies)
-                        stream.WriteLine("/reference:\"{0}\"", coreAssembly.GetAbsolutePath());
+                        stream.WriteLine("-reference:\"{0}\"", coreAssembly.GetAbsolutePath());
                 }
             }
             finally
@@ -124,7 +124,7 @@ namespace SE.Hecate.Sharp
                         frameworks.Add(framework, version);
                     }
                 }
-                stream.WriteLine("/reference:\"{0}\"", assembly);
+                stream.WriteLine("-reference:\"{0}\"", assembly);
             }
             foreach (FileDescriptor source in sources)
             {
