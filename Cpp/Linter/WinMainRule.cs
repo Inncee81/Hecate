@@ -120,7 +120,7 @@ namespace SE.Hecate.Cpp
         {
             lock (settings)
             {
-                if (settings.AssemblyType <= BuildModuleType.Console)
+                if (settings.AssemblyType < BuildModuleType.Executable)
                     settings.AssemblyType = BuildModuleType.Executable;
             }
         }

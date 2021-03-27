@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -141,26 +142,42 @@ namespace SE.Hecate.Sharp
 
         private readonly static Type AssemblyLoaderType = typeof(FrameworkAssemblyLoader);
 
-        /// <summary>
-        /// A collection of assemblies located in current .Net Framework version
-        /// </summary>
-        public readonly static PathDescriptor ReferenceAssemblies = new PathDescriptor(ReferenceAssemblyPath);
-        /// <summary>
-        /// A collection of assemblies located in current .Net Framework version
-        /// </summary>
-        public readonly static PathDescriptor ReferenceAssembliesAlternative = new PathDescriptor(ReferenceAssembliesAlternativePath);
-
         private static async Task PopulateAssemblies(HashSet<string> assemblyList, HashSet<FileSystemDescriptor> referenceAssemblies)
         {
+            string prefix; if ((Application.Platform & PlatformName.Windows) == PlatformName.Windows)
+            {
+                prefix = "v";
+            }
+            else prefix = string.Empty;
+            #if net40
+            string dirName = string.Concat(prefix, "4.0");
+            #elif net45
+            string dirName = string.Concat(prefix, "4.5");
+            #elif net451
+            string dirName = string.Concat(prefix, "4.5.1");
+            #elif net452
+            string dirName = string.Concat(prefix, "4.5.2");
+            #elif net46
+            string dirName = string.Concat(prefix, "4.6");
+            #elif net461
+            string dirName = string.Concat(prefix, "4.6.1");
+            #elif net462
+            string dirName = string.Concat(prefix, "4.6.2");
+            #elif net47
+            string dirName = string.Concat(prefix, "4.7");
+            #elif net471
+            string dirName = string.Concat(prefix, "4.7.1");
+            #elif net472
+            string dirName = string.Concat(prefix, "4.7.2");
+            #elif net48
+            string dirName = string.Concat(prefix, "4.8");
+            #endif
+
             AppDomain assemblyDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString());
             using (FrameworkAssemblyLoader loader = (FrameworkAssemblyLoader)assemblyDomain.CreateInstanceAndUnwrap(AssemblyLoaderType.Assembly.FullName, AssemblyLoaderType.FullName))
             {
                 assemblyDomain.ReflectionOnlyAssemblyResolve += loader.ResolveAssemblies;
-                if (ReferenceAssemblies.FindFiles("*.dll", referenceAssemblies, PathSeekOptions.RootLevel | PathSeekOptions.Forward) > 0)
-                {
-                    await referenceAssemblies.ParallelFor(loader.LoadReferenceAssembly);
-                }
-                else if (ReferenceAssembliesAlternative.FindFiles("*.dll", referenceAssemblies, PathSeekOptions.RootLevel | PathSeekOptions.Forward) > 0)
+                PathDescriptor assemblyPath; if (BuildParameter.ReferenceAssemblies.FindDirectory(dirName, out assemblyPath) && assemblyPath.FindFiles("*.dll", referenceAssemblies, PathSeekOptions.RootLevel | PathSeekOptions.Forward) > 0)
                 {
                     await referenceAssemblies.ParallelFor(loader.LoadReferenceAssembly);
                 }

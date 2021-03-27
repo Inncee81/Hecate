@@ -15,18 +15,18 @@ namespace SE.Hecate.Build
         /// <summary>
         /// C++
         /// </summary>
-        StaticLibrary,
+        StaticLibrary = 1,
         /// <summary>
         /// C++, C#
         /// </summary>
-        DynamicLibrary,
+        DynamicLibrary = 2,
         /// <summary>
         /// C++, C#
         /// </summary>
-        Console,
+        Console = 3,
         /// <summary>
         /// C++, C#
         /// </summary>
-        Executable
+        Executable = 4
     }
 }

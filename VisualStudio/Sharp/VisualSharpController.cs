@@ -111,6 +111,7 @@ namespace SE.Hecate.VisualStudio
                                 target.AssemblyName = package.Id.Name.FromPackageName();
                             }
                             else target.AssemblyName = module.Name;
+                            target.Type = conf.AssemblyType;
                             #endregion
 
                             #region Packages
@@ -210,7 +211,7 @@ namespace SE.Hecate.VisualStudio
                             ConflatePackages(project, target, current, conf, sharp.Settings[conf.Name].Dependencies, dependencyModules, true);
                             if (sharp.Settings[conf.Name].AssemblyType > target.Type)
                             {
-                                target.Type = sharp.Default.AssemblyType;
+                                target.Type = sharp.Settings[conf.Name].AssemblyType;
                             }
                             project.Packages.Add(dependency);
                         }

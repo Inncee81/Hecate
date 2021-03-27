@@ -121,6 +121,7 @@ namespace SE.Hecate.VisualStudio
                             target.AssemblyName = package.Id.Name.FromPackageName();
                         }
                         else target.AssemblyName = module.Name;
+                        target.Type = conf.AssemblyType;
                         #endregion
 
                         #region Packages

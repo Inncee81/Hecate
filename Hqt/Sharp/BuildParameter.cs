@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime;
 using SE.Config;
 #if !NET_FRAMEWORK
 using SE.Hecate.Build;
@@ -31,9 +32,19 @@ namespace SE.Hecate.Sharp
             private set { profile = value; }
         }
 
-        #if !NET_FRAMEWORK
+        #if NET_FRAMEWORK
+        [NamedProperty("referenceassemblies", TypeConverter = typeof(PathConverter))]
+        private static PathDescriptor referenceAssemblies;
+        /// <summary>
+        /// Dotnet SDK path
+        /// </summary>
+        public static PathDescriptor ReferenceAssemblies
+        {
+            get { return referenceAssemblies; }
+        }
+        #else
         [NamedProperty("dotnet", TypeConverter = typeof(PathConverter))]
-        private static PathDescriptor dotnet = new PathDescriptor("%ProgramFiles%/dotnet/shared");
+        private static PathDescriptor dotnet;
         /// <summary>
         /// Dotnet SDK path
         /// </summary>
@@ -63,6 +74,25 @@ namespace SE.Hecate.Sharp
             get { return plugins; }
         }
 
+        static BuildParameter()
+        {
+            #if NET_FRAMEWORK
+            if ((Application.Platform & PlatformName.Windows) == PlatformName.Windows)
+            {
+                referenceAssemblies = new PathDescriptor("%ProgramFiles(x86)%/Reference Assemblies/Microsoft/Framework/.NETFramework");
+            }
+            else if ((Application.Platform & PlatformName.Linux) == PlatformName.Linux)
+            {
+                referenceAssemblies = new PathDescriptor("/usr/lib/mono");
+            }
+            #else
+            if ((Application.Platform & PlatformName.Windows) == PlatformName.Windows)
+            {
+                dotnet = new PathDescriptor("%ProgramFiles%/dotnet/shared");
+            }
+            #endif
+            else Application.Warning(SeverityFlags.None, "Unsupported C# Platform");
+        }
         private BuildParameter()
         { }
     }

@@ -99,7 +99,7 @@ namespace SE.Hecate.Cpp
         {
             lock (settings)
             {
-                if (settings.AssemblyType <= BuildModuleType.DynamicLibrary)
+                if (settings.AssemblyType < BuildModuleType.Console)
                     settings.AssemblyType = BuildModuleType.Console;
             }
         }

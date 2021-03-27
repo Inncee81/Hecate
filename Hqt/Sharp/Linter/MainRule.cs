@@ -114,7 +114,7 @@ namespace SE.Hecate.Sharp
         {
             lock (settings)
             {
-                if (settings.AssemblyType <= BuildModuleType.DynamicLibrary)
+                if (settings.AssemblyType < BuildModuleType.Console)
                     settings.AssemblyType = BuildModuleType.Console;
             }
         }

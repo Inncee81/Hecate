@@ -210,7 +210,7 @@ namespace SE.Hecate.VisualStudio
                 foreach (FileDescriptor dependency in dependencies)
                 {
                     #if NET_FRAMEWORK
-                    if (!AssemblyCache.ReferenceAssemblies.Contains(dependency.Location) && !AssemblyCache.ReferenceAssembliesAlternative.Contains(dependency.Location))
+                    if (!Sharp.BuildParameter.ReferenceAssemblies.Contains(dependency.Location))
                     {
                         sw.WriteLine("    <Reference Include=\"{0}\">", dependency.Name);
                         sw.WriteLine("    <HintPath>{0}</HintPath>", dependency.GetRelativePath(project.File));
