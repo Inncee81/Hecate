@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using SE.Apollo.Package;
 using SE.Config;
@@ -23,6 +24,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return name; }
         }
 
@@ -33,6 +35,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public Dictionary<string, string> Defines
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return defines; }
         }
 
@@ -43,6 +46,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public bool Optimize
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return optimize || !Debug; }
         }
 
@@ -53,6 +57,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public bool Debug
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return debug && !optimize; }
         }
 
@@ -63,6 +68,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public bool DebugSymbols
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return debugSymbols; }
         }
 
@@ -73,6 +79,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public bool WarningAsError
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return warningAsError; }
         }
 
@@ -84,6 +91,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public Dictionary<string, string> TargetPaths
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return targetPaths; }
         }
 
@@ -94,6 +102,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public Dictionary<string, object> Properties
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return properties; }
         }
 
@@ -113,6 +122,7 @@ namespace SE.Hecate.Build
             this.properties = new Dictionary<string, object>();
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override int GetHashCode()
         {
             return name.GetHashCode();
@@ -127,6 +137,7 @@ namespace SE.Hecate.Build
             return false;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override string ToString()
         {
             return name.ToString();

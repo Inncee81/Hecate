@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Cpp
@@ -22,6 +23,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public IEnumerable<object> Modules
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return modules; }
         }
 
@@ -31,6 +33,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return name; }
         }
 
@@ -40,6 +43,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public BuildProfile Profile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return profile; }
         }
 
@@ -49,6 +53,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public bool IsPackage
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return isPackage; }
         }
 
@@ -65,10 +70,12 @@ namespace SE.Hecate.Cpp
             this.isPackage = module.IsPackage;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public IEnumerator<FileSystemDescriptor> GetEnumerator()
         {
             return files.GetEnumerator();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

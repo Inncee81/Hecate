@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SE.CommandLine;
 using SE.Config;
 
@@ -18,6 +19,7 @@ namespace SE.Hecate.VisualStudio
         [PropertyDescription("Creates a Visual Studio 2010 solution from the given profile name or default", Type = PropertyType.Optional)]
         private static string VisualStudio2010Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set 
             {
                 profile = value;
@@ -29,6 +31,7 @@ namespace SE.Hecate.VisualStudio
         [PropertyDescription("Creates a Visual Studio 2012 solution from the given profile name or default", Type = PropertyType.Optional)]
         private static string VisualStudio2012Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set
             {
                 profile = value;
@@ -40,6 +43,7 @@ namespace SE.Hecate.VisualStudio
         [PropertyDescription("Creates a Visual Studio 2013 solution from the given profile name or default", Type = PropertyType.Optional)]
         private static string VisualStudio2013Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set
             {
                 profile = value;
@@ -51,6 +55,7 @@ namespace SE.Hecate.VisualStudio
         [PropertyDescription("Creates a Visual Studio 2015 solution from the given profile name or default", Type = PropertyType.Optional)]
         private static string VisualStudio2015Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set
             {
                 profile = value;
@@ -62,6 +67,7 @@ namespace SE.Hecate.VisualStudio
         [PropertyDescription("Creates a Visual Studio 2017 solution from the given profile name or default", Type = PropertyType.Optional)]
         private static string VisualStudio2017Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set
             {
                 profile = value;
@@ -73,6 +79,7 @@ namespace SE.Hecate.VisualStudio
         [PropertyDescription("Creates a Visual Studio 2019 solution from the given profile name or default", Type = PropertyType.Optional)]
         private static string VisualStudio2019Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set
             {
                 profile = value;
@@ -86,6 +93,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public static VisualStudioVersion Version
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return version; }
         }
 
@@ -95,6 +103,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public static string Profile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return profile; }
         }
 

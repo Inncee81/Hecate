@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SE.Config;
 
 namespace SE.Hecate.Build
@@ -18,6 +19,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return name; }
         }
 
@@ -28,6 +30,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Compiler
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return compiler; }
         }
 
@@ -38,6 +41,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Assembler
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return assembler; }
         }
 
@@ -48,6 +52,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Linker
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return linker; }
         }
 
@@ -62,10 +67,12 @@ namespace SE.Hecate.Build
             this.linker = string.Empty;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override int GetHashCode()
         {
             return name.GetHashCode();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override bool Equals(object obj)
         {
             CompilerConfiguration conf = (obj as CompilerConfiguration);
@@ -76,6 +83,7 @@ namespace SE.Hecate.Build
             return false;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override string ToString()
         {
             return name.ToString();

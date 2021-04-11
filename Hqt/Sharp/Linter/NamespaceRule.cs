@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using SE.Parsing;
 using SE.SharpLang;
@@ -23,7 +24,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public Linter Linter
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return linter; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { linter = value; }
         }
         
@@ -33,7 +36,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public SharpModuleSettings Settings
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return settings; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { settings = value; }
         }
 
@@ -43,7 +48,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public CacheEntry Cache
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return cache; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { cache = value; }
         }
 
@@ -54,6 +61,7 @@ namespace SE.Hecate.Sharp
         {
             this.buffer = new StringBuilder();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void Dispose()
         {
             linter = null;
@@ -117,6 +125,7 @@ namespace SE.Hecate.Sharp
             }
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnReset()
         {
             if (scopes == null)

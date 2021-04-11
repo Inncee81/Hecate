@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace SE.Hecate
@@ -23,6 +24,7 @@ namespace SE.Hecate
         /// </summary>
         public int Count
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get
             {
                 coreLock.ReadLock();
@@ -42,6 +44,7 @@ namespace SE.Hecate
         }
         public int Priority
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return 0; }
         }
 
@@ -77,6 +80,7 @@ namespace SE.Hecate
             }
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public bool OnNext(KernelMessage value)
         {
             ProcessorUnit core; if (TryGetCore(value.Path, out core))
@@ -85,11 +89,13 @@ namespace SE.Hecate
             }
             else return false;
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public bool OnError(Exception error)
         {
             Application.Error(error);
             return false;
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void OnCompleted()
         { }
 
@@ -154,8 +160,10 @@ namespace SE.Hecate
             }
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Attach(PriorityDispatcher owner)
         { }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Detach(PriorityDispatcher owner)
         { }
     }

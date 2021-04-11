@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Cpp
@@ -20,6 +21,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public Dictionary<string, CppModuleSettings> Settings
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return settings; }
         }
 
@@ -29,6 +31,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public CppModuleSettings Default
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return @default; }
         }
 
@@ -38,6 +41,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public HashSet<FileDescriptor> Files
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return files; }
         }
 
@@ -69,10 +73,12 @@ namespace SE.Hecate.Cpp
             }
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public IEnumerator<FileDescriptor> GetEnumerator()
         {
             return files.GetEnumerator();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

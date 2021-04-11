@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml;
 
 namespace SE.Hecate.VisualStudio
@@ -28,6 +29,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public FileDescriptor File
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return file; }
         }
 
@@ -36,6 +38,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return file.Name; }
         }
         /// <summary>
@@ -43,6 +46,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public string FullName
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return file.FullName; }
         }
 
@@ -52,6 +56,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public List<VisualStudioProjectTarget> Targets
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return targets; }
         }
 
@@ -70,6 +75,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public Guid ProjectGuid
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return projectGuid; }
         }
 
@@ -79,6 +85,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public VisualStudioVersion Version
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return version; }
         }
 
@@ -88,6 +95,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public bool IsPackage
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return isPackage; }
         }
 

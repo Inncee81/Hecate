@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Sharp
@@ -20,6 +21,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public CompilerParameters Parameters
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return parameters; }
         }
 
@@ -29,6 +31,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public TempFileCollection TemporaryFiles
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return temporaryFiles; }
         }
 
@@ -37,6 +40,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public FileDescriptor TargetFile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get 
             {
                 return new FileDescriptor
@@ -45,6 +49,7 @@ namespace SE.Hecate.Sharp
                     System.IO.Path.GetFileName(parameters.OutputAssembly)
                 );
             }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { parameters.OutputAssembly = value.GetAbsolutePath(); }
         }
 
@@ -53,6 +58,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public IList References
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return parameters.ReferencedAssemblies; }
         }
 

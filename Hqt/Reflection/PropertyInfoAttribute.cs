@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate
 {
@@ -18,7 +19,9 @@ namespace SE.Hecate
         /// </summary>
         public string Category
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return category; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { category = value; }
         }
 

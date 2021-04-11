@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace SE.Hecate.Sharp
@@ -45,6 +46,7 @@ namespace SE.Hecate.Sharp
         {
             this.Timestamp = fileDate;
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Dispose()
         {
             foreach (CacheEntry entry in Entries.Values)

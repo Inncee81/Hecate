@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Sharp
@@ -18,7 +19,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public FileDescriptor TargetFile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return outputAssembly; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { outputAssembly = value; }
         }
 
@@ -28,6 +31,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public List<string> References
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return referencedAssemblies; }
         }
 
@@ -37,6 +41,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public Dictionary<string, string> Frameworks
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return frameworks; }
         }
 

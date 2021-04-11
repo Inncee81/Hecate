@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using SE.Hecate.Build;
 
@@ -45,6 +46,7 @@ namespace SE.Hecate.Sharp
             UsingDirectives = CollectionPool<List<string>, string>.Get();
             Namespaces = CollectionPool<List<string>, string>.Get();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Dispose()
         {
             CollectionPool<List<string>, string>.Return(UsingDirectives);

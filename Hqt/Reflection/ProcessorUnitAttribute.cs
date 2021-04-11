@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate
 {
@@ -19,7 +20,9 @@ namespace SE.Hecate
         /// </summary>
         public bool IsExtension
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return isExtension; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { isExtension = value; }
         }
 
@@ -29,7 +32,9 @@ namespace SE.Hecate
         /// </summary>
         public bool IsBuiltIn
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return isBuiltIn; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { isBuiltIn = value; }
         }
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.VisualStudio
 {
@@ -14,6 +15,7 @@ namespace SE.Hecate.VisualStudio
     {
         public override Guid ProjectTypeGuid
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Guid.ParseExact(CppGuid, "D"); }
         }
 

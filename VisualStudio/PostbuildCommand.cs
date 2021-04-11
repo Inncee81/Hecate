@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Flex;
 
 namespace SE.Hecate.VisualStudio
@@ -25,10 +26,12 @@ namespace SE.Hecate.VisualStudio
             this.projects = projects;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public IEnumerator<VisualStudioProject> GetEnumerator()
         {
             return projects.GetEnumerator();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

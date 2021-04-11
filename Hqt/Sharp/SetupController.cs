@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.CommandLine;
 using SE.Config;
 using SE.Hecate.Build;
@@ -19,18 +20,22 @@ namespace SE.Hecate.Sharp
     {
         int IPrioritizedActor.Priority
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return 0; }
         }
         public override PathDescriptor Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Application.SdkRoot; }
         }
         public override bool Enabled
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return true; }
         }
         public override UInt32 Family
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (UInt32)ProcessorFamilies.Setup; }
         }
 
@@ -40,11 +45,14 @@ namespace SE.Hecate.Sharp
         public SetupController()
         { }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Attach(PriorityDispatcher owner)
         { }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Detach(PriorityDispatcher owner)
         { }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public bool OnNext(KernelMessage value)
         {
             try
@@ -57,10 +65,12 @@ namespace SE.Hecate.Sharp
                 return false;
             }
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public bool OnError(Exception error)
         {
             return true;
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void OnCompleted()
         { }
 

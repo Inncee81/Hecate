@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using SE.Actor;
 using SE.Reactive;
@@ -55,6 +56,7 @@ namespace SE.Hecate
                 streamLock.WriteRelease();
             }
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override bool TryGet(ref KernelMessage message, out IReactiveStream<KernelMessage, bool> result)
         {
             streamLock.ReadLock();

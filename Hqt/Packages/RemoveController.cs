@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SE.Apollo.Package;
@@ -21,14 +22,17 @@ namespace SE.Hecate.Packages
     {
         public override PathDescriptor Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Application.SdkRoot; }
         }
         public override bool Enabled
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return true; }
         }
         public override UInt32 Family
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (UInt32)ProcessorFamilies.Remove; }
         }
 

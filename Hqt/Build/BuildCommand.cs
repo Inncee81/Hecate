@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Flex;
 
 namespace SE.Hecate.Build
@@ -41,6 +42,7 @@ namespace SE.Hecate.Build
         /// <param name="family">The processor family to target</param>
         /// <param name="path">A current worker path to use</param>
         /// <param name="paths">A collection of paths included into the build action</param>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static BuildCommand Create(ProcessorFamilies family, PathDescriptor path, IEnumerable<FileSystemDescriptor> paths)
         {
             return new BuildCommand((UInt32)family, path, paths);
@@ -51,15 +53,18 @@ namespace SE.Hecate.Build
         /// <param name="root">The root message the instance should base on</param>
         /// <param name="family">The processor family to target</param>
         /// <param name="path">A current worker path to use</param>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static BuildCommand Create(BuildCommand root, ProcessorFamilies family, PathDescriptor path)
         {
             return new BuildCommand(root.Template | (UInt32)family, path, root.paths);
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public IEnumerator<FileSystemDescriptor> GetEnumerator()
         {
             return paths.GetEnumerator();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

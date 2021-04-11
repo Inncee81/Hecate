@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using SE.Actor;
 using SE.Reactive;
@@ -20,6 +21,7 @@ namespace SE.Hecate
 
         public int Count
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return subscriptions.Count; }
         }
 
@@ -31,6 +33,7 @@ namespace SE.Hecate
             this.subscriptions = new List<IPrioritizedActor>();
             this.subscriptionLock = new ReadWriteLock();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         protected override void Dispose(bool disposing)
         {
             Clear();

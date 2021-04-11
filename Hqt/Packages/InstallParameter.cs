@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SE.Config;
 
 namespace SE.Hecate.Packages
@@ -21,6 +22,7 @@ namespace SE.Hecate.Packages
         /// </summary>
         public static bool Force
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return force; }
         }
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +27,7 @@ namespace SE.Hecate.Sharp
             /// </summary>
             public Dictionary<string, List<FileDescriptor>> Assemblies
             {
+                [MethodImpl(OptimizationExtensions.ForceInline)]
                 get { return assemblies; }
             }
             
@@ -40,6 +42,7 @@ namespace SE.Hecate.Sharp
             /// <summary>
             /// Tries to inegrate the provided file into the assembly list
             /// </summary>
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             public void LoadReferenceAssembly(FileSystemDescriptor assemblyFile)
             {
                 try
@@ -87,6 +90,7 @@ namespace SE.Hecate.Sharp
             /// <summary>
             /// Occurs when the resolution of an assembly fails
             /// </summary>
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             public Assembly ResolveAssemblies(object sender, ResolveEventArgs args)
             {
                 return Assembly.ReflectionOnlyLoad(args.Name);

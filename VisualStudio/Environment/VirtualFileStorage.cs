@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.VisualStudio
 {
@@ -20,6 +21,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public Dictionary<string, VisualStudioDirectory> Directories
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return directories; }
         }
 
@@ -38,6 +40,7 @@ namespace SE.Hecate.VisualStudio
             foreach (VisualStudioDirectory directory in directories.Values)
                 yield return directory;
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

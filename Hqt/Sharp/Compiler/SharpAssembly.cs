@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Sharp
@@ -20,6 +21,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public FileDescriptor Location
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return location; }
         }
 
@@ -29,6 +31,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public string Platform
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return platform; }
         }
 
@@ -38,6 +41,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public PlatformTarget Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return target; }
         }
 
@@ -47,6 +51,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool IsOptimized
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return isOptimized; }
         }
 
@@ -56,6 +61,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool HasDebugSymbols
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return hasDebugSymbols; }
         }
 

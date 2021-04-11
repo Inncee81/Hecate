@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Json;
 
 namespace SE.Hecate.Sharp
@@ -96,11 +97,13 @@ namespace SE.Hecate.Sharp
             else return Application.FailureReturnCode;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         static void Log(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(e.Data) && e.Data.StartsWith("[warning]", StringComparison.InvariantCultureIgnoreCase))
                 Application.Warning(SeverityFlags.Minimal, e.Data);
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         static void Error(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(e.Data))

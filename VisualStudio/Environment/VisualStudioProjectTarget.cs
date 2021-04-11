@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.VisualStudio
@@ -19,6 +20,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public BuildConfiguration Configuration
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return configuration; }
         }
 
@@ -28,6 +30,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public HashSet<FileDescriptor> Files
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return files; }
         }
 
@@ -37,6 +40,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public HashSet<FileDescriptor> Dependencies
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return dependencies; }
         }
 
@@ -46,6 +50,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public HashSet<VisualStudioProject> References
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return references; }
         }
 
@@ -55,7 +60,9 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public BuildModuleType Type
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return type; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { type = value; }
         }
 
@@ -65,7 +72,9 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public string AssemblyName
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return assemblyName; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { assemblyName = value; }
         }
 

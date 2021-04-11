@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SE.Config;
 
 namespace SE.Hecate.Build
@@ -21,6 +22,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public static bool Fast
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return fast; }
         }
 
@@ -32,6 +34,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public static bool Rebuild
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return rebuild; }
         }
 

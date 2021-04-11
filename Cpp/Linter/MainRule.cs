@@ -7,6 +7,7 @@ using System.Text;
 using SE.Hecate.Build;
 using SE.Parsing;
 using SE.CppLang;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.Cpp
 {
@@ -21,7 +22,9 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public Linter Linter
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return linter; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { linter = value; }
         }
         
@@ -31,7 +34,9 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public CppModuleSettings Settings
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return settings; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { settings = value; }
         }
 
@@ -40,6 +45,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public MainRule()
         { }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void Dispose()
         {
             linter = null;
@@ -93,8 +99,10 @@ namespace SE.Hecate.Cpp
             else return ProductionState.Revert;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnReset()
         { }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnCompleted()
         {
             lock (settings)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Config;
 #if !NET_FRAMEWORK
 using SE.Hecate.Build;
@@ -28,7 +29,9 @@ namespace SE.Hecate.Sharp
         [PropertyDescription("Creates necessary files to publish code modules as packages", Type = PropertyType.Optional)]
         public static string Profile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return profile; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             private set { profile = value; }
         }
 
@@ -40,6 +43,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public static PathDescriptor ReferenceAssemblies
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return referenceAssemblies; }
         }
         #else
@@ -50,6 +54,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public static PathDescriptor Dotnet
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return dotnet; }
         }
 
@@ -60,6 +65,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public static CompilerConfiguration Roslyn
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return roslyn; }
         }
         #endif
@@ -71,6 +77,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public static IEnumerable<PathDescriptor> Plugins
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return plugins; }
         }
 

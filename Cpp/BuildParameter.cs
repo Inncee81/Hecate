@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Config;
 
 namespace SE.Hecate.Cpp
@@ -20,6 +21,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public static string SdkVersion
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return sdkVersion; }
         }
 
@@ -30,6 +32,7 @@ namespace SE.Hecate.Cpp
         /// </summary>
         public static IEnumerable<PathDescriptor> Plugins
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return plugins; }
         }
 

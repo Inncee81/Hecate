@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Config;
 
 namespace SE.Hecate.Build
@@ -39,6 +40,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Platform
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return platform; }
         }
         
@@ -50,6 +52,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public PlatformTarget Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return target; }
         }
 
@@ -60,6 +63,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public HashSet<BuildConfiguration> Configurations
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return configurations; }
         }
 
@@ -106,12 +110,14 @@ namespace SE.Hecate.Build
         /// <summary>
         /// Assigns mandatory default values to this profile
         /// </summary>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void AddDefaultValues()
         {
             if (configurations.Count == 0)
                 configurations.Add(new BuildConfiguration(defaultConfig));
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override string ToString()
         {
             return name;

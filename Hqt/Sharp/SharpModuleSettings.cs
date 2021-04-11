@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Apollo.Package;
 using SE.Hecate.Build;
 
@@ -21,6 +22,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.Name; }
         }
         /// <summary>
@@ -28,6 +30,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public IEnumerable<string> Defines
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.Defines.Keys; }
         }
         /// <summary>
@@ -35,6 +38,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool Optimize
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.Optimize; }
         }
         /// <summary>
@@ -42,6 +46,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool Debug
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.Debug; }
         }
         /// <summary>
@@ -49,6 +54,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool DebugSymbols
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.DebugSymbols; }
         }
         /// <summary>
@@ -56,6 +62,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool WarningAsError
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.WarningAsError; }
         }
 
@@ -65,6 +72,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public HashSet<string> UsingDirectives
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return usingDirectives; }
         }
 
@@ -74,6 +82,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public HashSet<string> Namespaces
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return namespaces; }
         }
 
@@ -84,7 +93,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public BuildModuleType AssemblyType
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return assemblyType; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { assemblyType = value; }
         }
 
@@ -94,6 +105,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public HashSet<FileDescriptor> References
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return references; }
         }
 
@@ -103,6 +115,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public HashSet<BuildModule> Dependencies
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return dependencies; }
         }
 
@@ -120,15 +133,18 @@ namespace SE.Hecate.Sharp
             this.assemblyType = BuildModuleType.DynamicLibrary;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static implicit operator BuildConfiguration(SharpModuleSettings conf)
         {
             return conf.config;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override int GetHashCode()
         {
             return config.GetHashCode();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override bool Equals(object obj)
         {
             SharpModuleSettings conf = (obj as SharpModuleSettings);
@@ -139,6 +155,7 @@ namespace SE.Hecate.Sharp
             return false;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override string ToString()
         {
             return config.ToString();
@@ -151,6 +168,7 @@ namespace SE.Hecate.Sharp
         /// <param name="moduleTarget">The directory path a build module was found at</param>
         /// <param name="family">A build action family to add</param>
         /// <returns>The absolute path the deployment directory</returns>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public string GetDeploymentPath(PathDescriptor moduleTarget, string family)
         {
             return config.GetDeploymentPath(moduleTarget, family);

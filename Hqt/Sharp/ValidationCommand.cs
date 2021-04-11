@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 
 namespace SE.Hecate.Sharp
@@ -22,6 +23,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return name; }
         }
 
@@ -31,6 +33,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public BuildProfile Profile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return profile; }
         }
 
@@ -45,10 +48,12 @@ namespace SE.Hecate.Sharp
             this.files = files;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public IEnumerator<FileSystemDescriptor> GetEnumerator()
         {
             return files.GetEnumerator();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

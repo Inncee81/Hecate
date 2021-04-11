@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Config;
 using SE.Flex;
 
@@ -23,6 +24,7 @@ namespace SE.Hecate
         /// </summary>
         public string Command
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get 
             {
                 if (!string.IsNullOrWhiteSpace(command))
@@ -41,6 +43,7 @@ namespace SE.Hecate
         /// </summary>
         public List<string> Args
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return args; }
         }
 

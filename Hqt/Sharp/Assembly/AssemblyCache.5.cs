@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 
@@ -23,6 +24,7 @@ namespace SE.Hecate.Sharp
                 this.resolver = new AssemblyDependencyResolver(Assembly.GetExecutingAssembly().Location);
             }
 
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             public void LoadReferenceAssembly(FileSystemDescriptor assemblyFile)
             {
                 try
@@ -37,11 +39,13 @@ namespace SE.Hecate.Sharp
                 { }
             }
 
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             public void LoadFrameworkAssembly(string assemblyIdentifier)
             {
                 LoadAssembly(assemblyIdentifier, true);
             }
 
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             public void LoadAssembly(string assemblyIdentifier)
             {
                 LoadAssembly(assemblyIdentifier, false);
@@ -142,6 +146,7 @@ namespace SE.Hecate.Sharp
         }
         private static int defaultAssemblies;
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         static partial void InitializeFromCache()
         {
             List<FileDescriptor> sources; if (assemblies.TryGetValue(string.Empty, out sources))

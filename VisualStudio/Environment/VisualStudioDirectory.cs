@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.VisualStudio
 {
@@ -23,6 +24,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public Guid Guid
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return guid; }
         }
 
@@ -32,6 +34,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return name; }
         }
 
@@ -41,6 +44,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public HashSet<FileSystemDescriptor> Files
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return files; }
         }
 
@@ -50,6 +54,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public HashSet<VisualStudioProject> Projects
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return projects; }
         }
 

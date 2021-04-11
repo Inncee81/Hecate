@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SE.Flex;
 using SE.Hecate.Build;
 
@@ -19,6 +20,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public VisualCppProject Project
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return project; }
         }
 
@@ -28,6 +30,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public BuildProfile Profile
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return profile; }
         }
 

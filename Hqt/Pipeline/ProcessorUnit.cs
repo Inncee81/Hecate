@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate
 {
@@ -18,6 +19,7 @@ namespace SE.Hecate
         /// </summary>
         public ProcessorPriority Priority
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return priority; }
         }
 

@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -29,14 +30,17 @@ namespace SE.Hecate.Packages
 
         public override PathDescriptor Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Application.SdkRoot; }
         }
         public override bool Enabled
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return true; }
         }
         public override UInt32 Family
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (UInt32)ProcessorFamilies.Install; }
         }
 

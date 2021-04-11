@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using SE.Flex;
 
@@ -21,6 +22,7 @@ namespace SE.Hecate
         /// </summary>
         public UInt32 Id
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Template.ComponentId; }
         }
 
@@ -30,6 +32,7 @@ namespace SE.Hecate
         /// </summary>
         public PathDescriptor Path
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return path; }
         }
 
@@ -41,6 +44,7 @@ namespace SE.Hecate
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public Task<int> Task
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get 
             {
                 return Taskʾ.WhenAll<int>(tasks)
@@ -66,6 +70,7 @@ namespace SE.Hecate
             this.path = path;
             this.tasks = CollectionPool<List<Task<int>>, Task<int>>.Get();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void Dispose()
         {
             Release();
@@ -77,6 +82,7 @@ namespace SE.Hecate
         /// completion by the original sender
         /// </summary>
         /// <param name="operation">An asynchronous operation</param>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Attach(Task<int> operation)
         {
             tasks.Add(operation);
@@ -86,6 +92,7 @@ namespace SE.Hecate
         /// Awaits completion of the provided message synchronously
         /// </summary>
         /// <returns>True if the message was processed properly, false otherwise</returns>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public int Await()
         {
             int result; if (Task.TryGetResult(out result))
@@ -98,6 +105,7 @@ namespace SE.Hecate
         /// <summary>
         /// Releases allocated resources before disposing
         /// </summary>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public void Release()
         {
             if (tasks != null)
@@ -140,6 +148,7 @@ namespace SE.Hecate
         /// </summary>
         /// <param name="family">The processor family to target</param>
         /// <param name="path">A current worker path to use</param>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static KernelMessage Create(ProcessorFamilies family, PathDescriptor path)
         {
             return new KernelMessage((UInt32)family, path);
@@ -150,6 +159,7 @@ namespace SE.Hecate
         /// <param name="root">The root message the instance should base on</param>
         /// <param name="family">The processor family to target</param>
         /// <param name="path">A current worker path to use</param>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static KernelMessage Create(KernelMessage root, ProcessorFamilies family, PathDescriptor path)
         {
             return new KernelMessage(root.Template | (UInt32)family, path);

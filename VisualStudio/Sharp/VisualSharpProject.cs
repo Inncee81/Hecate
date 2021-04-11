@@ -5,6 +5,7 @@ using SE.Hecate.Build;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.VisualStudio
 {
@@ -15,6 +16,7 @@ namespace SE.Hecate.VisualStudio
     {
         public override Guid ProjectTypeGuid
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Guid.ParseExact(SharpGuid, "D"); }
         }
 
@@ -25,7 +27,9 @@ namespace SE.Hecate.VisualStudio
         /// <remarks>The namespace will be used for files created from within VisualStudio</remarks>
         public string DefaultNamespace
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return defaultNamespace; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { defaultNamespace = value; }
         }
 
@@ -35,6 +39,7 @@ namespace SE.Hecate.VisualStudio
         /// </summary>
         public HashSet<BuildModule> Packages
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return packages; }
         }
 
@@ -47,7 +52,7 @@ namespace SE.Hecate.VisualStudio
         public VisualSharpProject(VisualStudioVersion version, PathDescriptor projectRoot, string name)
             : base(version, new FileDescriptor(projectRoot, "{0}.csproj", name), false)
         {
-            packages = new HashSet<BuildModule>();
+            this.packages = new HashSet<BuildModule>();
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using SE.Alchemy;
 using SE.Apollo.Package;
@@ -29,19 +30,23 @@ namespace SE.Hecate
         /// </summary>
         public static SetupController Default
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return @default; }
         }
 
         public override PathDescriptor Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Application.SdkRoot; }
         }
         public override bool Enabled
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return true; }
         }
         public override UInt32 Family
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (UInt32)ProcessorFamilies.Setup; }
         }
 
@@ -54,6 +59,7 @@ namespace SE.Hecate
                 @default = this;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override bool Process(KernelMessage command)
         {
             command.Attach(Taskʾ.Run<int>(() => LoadPackageManager()));

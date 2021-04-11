@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using SE.Config;
 
 namespace SE.App
@@ -20,6 +21,7 @@ namespace SE.App
         /// </summary>
         public static string Host
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return host; }
         }
 
@@ -30,6 +32,7 @@ namespace SE.App
         /// </summary>
         public static int LogLevel
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (int)Application.LogSeverity; }
             private set
             {
@@ -52,6 +55,7 @@ namespace SE.App
         /// </summary>
         public static bool DisplayInfo
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return displayInfo; }
         }
 

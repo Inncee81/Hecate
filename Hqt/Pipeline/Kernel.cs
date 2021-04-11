@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using SE.Actor;
 using SE.Reactive;
@@ -101,11 +102,13 @@ namespace SE.Hecate
         /// <summary>
         /// Automatically locates and loads ProcessorUnits available in the assembly
         /// </summary>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static void Load()
         {
             AppDomain.CurrentDomain.GetAssemblies()
                      .ForEach(Load);
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         private static void Load(Assembly assembly)
         {
             assembly.GetTypes()
@@ -207,6 +210,7 @@ namespace SE.Hecate
         /// <summary>
         /// Indicates a critical failure in the pipeline which sets it into cancellation state
         /// </summary>
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static void Exit()
         {
             Application.Error(SeverityFlags.Minimal, "Processing canceled");

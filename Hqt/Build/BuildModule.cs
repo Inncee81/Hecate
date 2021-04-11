@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Flex;
 
 namespace SE.Hecate.Build
@@ -19,6 +20,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public PathDescriptor Location
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return location; }
         }
 
@@ -27,6 +29,7 @@ namespace SE.Hecate.Build
         /// </summary>
         public string Name
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return location.Name; }
         }
 
@@ -36,7 +39,9 @@ namespace SE.Hecate.Build
         /// </summary>
         public bool IsPackage
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return isPackage; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             internal set { isPackage = value; }
         }
 
@@ -48,10 +53,12 @@ namespace SE.Hecate.Build
             this.location = location;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override int GetHashCode()
         {
             return location.GetHashCode();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override bool Equals(object obj)
         {
             BuildModule tmp = (obj as BuildModule);
@@ -62,6 +69,7 @@ namespace SE.Hecate.Build
             else return false;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override string ToString()
         {
             return Name;

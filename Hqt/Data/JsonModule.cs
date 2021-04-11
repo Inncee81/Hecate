@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SE.Alchemy;
 using SE.Json;
 
@@ -24,6 +25,7 @@ namespace SE.Hecate
         public JsonModule()
         { }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public string Transform(Alchemy.Token token, string input)
         {
             if (token == Alchemy.Token.Identifier)

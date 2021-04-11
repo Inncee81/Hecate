@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using SE.Hecate.Build;
 using SE.Parsing;
@@ -21,7 +22,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public Linter Linter
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return linter; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { linter = value; }
         }
         
@@ -31,7 +34,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public SharpModuleSettings Settings
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return settings; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { settings = value; }
         }
 
@@ -108,8 +113,10 @@ namespace SE.Hecate.Sharp
             else return ProductionState.Revert;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnReset()
         { }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnCompleted()
         {
             lock (settings)

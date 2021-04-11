@@ -5,12 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate
 {
-    /// <summary>
-    /// Keeps a priority indicator which is used to order ProcessorUnits in their family
-    /// </summary>
+/// <summary>
+/// Keeps a priority indicator which is used to order ProcessorUnits in their family
+/// </summary>
     public struct ProcessorPriority : IComparable<ProcessorPriority>
     {
         public static readonly ProcessorPriority Default = new ProcessorPriority(0);
@@ -21,6 +22,7 @@ namespace SE.Hecate
         /// </summary>
         public int Value
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (int)value; }
         }
 
@@ -29,6 +31,7 @@ namespace SE.Hecate
         /// </summary>
         public bool IsSdkRoot
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return ((value & 3) != 0); }
         }
         /// <summary>
@@ -36,6 +39,7 @@ namespace SE.Hecate
         /// </summary>
         public bool IsProjectRoot
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (((value >> 4) & 3) != 0); }
         }
         /// <summary>
@@ -43,6 +47,7 @@ namespace SE.Hecate
         /// </summary>
         public bool IsLocalOverride
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (((value >> 2) & 3) != 0); }
         }
 
@@ -54,19 +59,23 @@ namespace SE.Hecate
             this.value = priority;
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static implicit operator int(ProcessorPriority priority)
         {
             return priority.value;
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public static implicit operator ProcessorPriority(int priority)
         {
             return new ProcessorPriority((byte)(priority & 0xFF));
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public int CompareTo(ProcessorPriority other)
         {
             return value.CompareTo(other.value);
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public override int GetHashCode()
         {
             return value.GetHashCode();
@@ -92,14 +101,17 @@ namespace SE.Hecate
             }
             return new ProcessorPriority(priority);
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         private static byte SetSdkRoot(byte priority)
         {
             return (byte)(priority | 1);
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         private static byte SetProjectRoot(byte priority)
         {
             return (byte)(priority | (1 << 4));
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         private static byte SetLocalOverride(byte priority, bool value)
         {
             return (byte)(priority | (value ? (1 << 2) : 0));

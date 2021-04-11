@@ -8,6 +8,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SE.Flex;
 using SE.Hecate.Build;
 
@@ -27,7 +28,9 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public BuildModuleType Type
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return type; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             set { type = value; }
         }
 
@@ -37,6 +40,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public List<FileSystemDescriptor> Sources
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return sources; }
         }
 
@@ -45,6 +49,7 @@ namespace SE.Hecate.Sharp
         /// </summary>
         public bool WarningAsError
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return config.WarningAsError; }
         }
 
@@ -82,10 +87,12 @@ namespace SE.Hecate.Sharp
             base.Dispose();
         }
 
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         public IEnumerator<FileSystemDescriptor> GetEnumerator()
         {
             return sources.GetEnumerator();
         }
+        [MethodImpl(OptimizationExtensions.ForceInline)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

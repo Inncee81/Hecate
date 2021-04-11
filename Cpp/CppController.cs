@@ -11,6 +11,7 @@ using SE.Parsing;
 using SE.CppLang;
 using SE.Hecate.Build;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.Cpp
 {
@@ -77,14 +78,17 @@ namespace SE.Hecate.Cpp
 
         public override PathDescriptor Target
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return Application.SdkRoot; }
         }
         public override bool Enabled
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return true; }
         }
         public override UInt32 Family
         {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return (UInt32)ProcessorFamilies.CppInitialize; }
         }
 
