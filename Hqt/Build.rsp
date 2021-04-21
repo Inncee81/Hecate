@@ -1,9 +1,0 @@
--nologo
--debug
--nowarn:0436,1685
--out:../../Hqt.exe
--platform:x64
--target:exe
--recurse:*.cs
--define:net45;NET45;NET_4_5;NET_FRAMEWORK
--reference:System.Net.Http.dll
