@@ -6,8 +6,5 @@
 **************************************************************************************
 code
 
-set -e
-cd "`dirname "$0"`"
-
-rm -f Build.rsp
-sh ./Build.sh
+# Run the mono build
+sh Build.mono.sh
