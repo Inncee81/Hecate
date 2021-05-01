@@ -1,38 +1,39 @@
-{
-    "name": "@schroedingerentertainment/se.hecate.hqt",
-    "description": "Data driven code engine managing code modules, building projects and creating IDE files",
-    "homepage": "https://github.com/SchroedingerEntertainment/Hecate",
-    "license": "AGPL-3.0-or-later",
-    "version": "1.6.0",
-    "dependencies": {
-        "@schroedingerentertainment/se.apollo.package": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.actor": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.alchemy": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.app": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.command-line": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.common": "^1.4.0",
-        "@schroedingerentertainment/se.sharp.config": "^1.1.0",
-        "@schroedingerentertainment/se.sharp.flex": "^1.3.0",
-        "@schroedingerentertainment/se.sharp.json": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.parsing": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.reactive": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.sharp-lang": "^1.1.0",
-        "@schroedingerentertainment/se.sharp.tar": "^1.0.0",
-        "@schroedingerentertainment/se.sharp.web": "^1.0.0"
+﻿{
+    "name" : "@schroedingerentertainment/se.hecate.hqt",
+    "description" : "Data driven code engine managing code modules, building projects and creating IDE files",
+    "homepage" : "https://github.com/SchroedingerEntertainment/Hecate",
+    "license" : "AGPL-3.0-or-later",
+    "version" : "1.7.0",
+    "dependencies" : {
+        "@schroedingerentertainment/se.apollo.package" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.actor" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.alchemy" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.app" : "^1.0.0",
+        "@schroedingerentertainment/se.sharp.command-line" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.common" : "^1.4.0",
+        "@schroedingerentertainment/se.sharp.config" : "^1.2.0",
+        "@schroedingerentertainment/se.sharp.crypto" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.flex" : "^1.4.0",
+        "@schroedingerentertainment/se.sharp.json" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.parsing" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.sharp-lang" : "^1.2.0",
+        "@schroedingerentertainment/se.sharp.reactive" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.tar" : "^1.1.0",
+        "@schroedingerentertainment/se.sharp.web" : "^1.1.0"
     },
-    "keywords": [
+    "keywords" : [
         "C#",
         "sharp",
         "csharp",
         "hecate"
     ],
-    "author": {
-        "name": "Shaarigan",
-        "url": "https://github.com/Shaarigan"
+    "author" : {
+        "name" : "Shaarigan",
+        "url" : "https://github.com/Shaarigan"
     },
-    "repository": {
-        "url": "https://github.com/SchroedingerEntertainment/Hecate.git",
-        "type": "git",
-        "directory": "Hqt"
+    "repository" : {
+        "url" : "https://github.com/SchroedingerEntertainment/Hecate.git",
+        "type" : "git",
+        "directory" : "Hqt"
     }
 }
