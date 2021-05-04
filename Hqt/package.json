@@ -12,7 +12,6 @@
         "@schroedingerentertainment/se.sharp.command-line" : "^1.1.0",
         "@schroedingerentertainment/se.sharp.common" : "^1.4.0",
         "@schroedingerentertainment/se.sharp.config" : "^1.2.0",
-        "@schroedingerentertainment/se.sharp.crypto" : "^1.1.0",
         "@schroedingerentertainment/se.sharp.flex" : "^1.4.0",
         "@schroedingerentertainment/se.sharp.json" : "^1.1.0",
         "@schroedingerentertainment/se.sharp.parsing" : "^1.1.0",
