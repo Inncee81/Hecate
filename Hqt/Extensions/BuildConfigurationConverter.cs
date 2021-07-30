@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using SE.CommandLine;
 using SE.Config;
 using SE.Json;
 
@@ -37,6 +38,7 @@ namespace SE.Hecate.Build
 
                             BuildConfiguration config = new BuildConfiguration(node.Name);
                             PropertyMapper.Assign(config, settings, true, true);
+                            PropertyMapper.Assign(config, CommandLineOptions.Default, true, true);
                             items.Add(config);
                         }
                         node = node.Next;

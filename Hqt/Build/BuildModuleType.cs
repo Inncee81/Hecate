@@ -12,21 +12,29 @@ namespace SE.Hecate.Build
     public enum BuildModuleType : byte
     {
         Undefined = 0,
+
         /// <summary>
         /// C++
         /// </summary>
         StaticLibrary = 1,
+        Stl = StaticLibrary,
+
         /// <summary>
         /// C++, C#
         /// </summary>
         DynamicLibrary = 2,
+        Lib = DynamicLibrary,
+
         /// <summary>
         /// C++, C#
         /// </summary>
         Console = 3,
+        Cmd = Console,
+
         /// <summary>
         /// C++, C#
         /// </summary>
-        Executable = 4
+        Executable = 4,
+        Exe = Executable
     }
 }

@@ -16,6 +16,7 @@ namespace SE.Hecate.Cpp
     public class ValidationCommand : KernelMessage, IEnumerable<FileSystemDescriptor>
     {
         IEnumerable<FileSystemDescriptor> files;
+        BuildModule module;
 
         IEnumerable<object> modules;
         /// <summary>
@@ -27,14 +28,13 @@ namespace SE.Hecate.Cpp
             get { return modules; }
         }
 
-        string name;
         /// <summary>
         /// The name of the BuildModule instance attached to this action
         /// </summary>
         public string Name
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return name; }
+            get { return module.Name; }
         }
 
         BuildProfile profile;
@@ -47,14 +47,13 @@ namespace SE.Hecate.Cpp
             get { return profile; }
         }
 
-        bool isPackage;
         /// <summary>
         /// Determines if this action relates to a package module
         /// </summary>
         public bool IsPackage
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return isPackage; }
+            get { return module.IsPackage; }
         }
 
         /// <summary>
@@ -64,10 +63,9 @@ namespace SE.Hecate.Cpp
             : base(module.Template | (UInt32)ProcessorFamilies.CppInitialize, module.Location)
         {
             this.modules = modules;
-            this.name = module.Name;
+            this.module = module;
             this.profile = profile;
             this.files = files;
-            this.isPackage = module.IsPackage;
         }
 
         [MethodImpl(OptimizationExtensions.ForceInline)]

@@ -63,21 +63,30 @@ namespace SE.Hecate.Sharp
         }
 
         /// <summary>
+        /// A collection of resources embedded into this compiler request
+        /// </summary>
+        public IList Resources
+        {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            get { return parameters.EmbeddedResources; }
+        }
+
+        /// <summary>
         /// Finally processes the provided settings into a compiler related data type
         /// </summary>
         public CompilerParameters Finalize()
         {
             switch (profile.Target)
             {
-                case PlatformTarget.Any: parameters.CompilerOptions += " /platform:anycpu"; break;
-                case PlatformTarget.Arm: parameters.CompilerOptions += " /platform:ARM"; break;
-                case PlatformTarget.x86: parameters.CompilerOptions += " /platform:x86"; break;
-                case PlatformTarget.Arm64: parameters.CompilerOptions += " /platform:ARM64"; break;
+                case PlatformTarget.Any: parameters.CompilerOptions += " -platform:anycpu"; break;
+                case PlatformTarget.Arm: parameters.CompilerOptions += " -platform:ARM"; break;
+                case PlatformTarget.x86: parameters.CompilerOptions += " -platform:x86"; break;
+                case PlatformTarget.Arm64: parameters.CompilerOptions += " -platform:ARM64"; break;
                 case PlatformTarget.x64: 
-                default: parameters.CompilerOptions += " /platform:x64"; break;
+                default: parameters.CompilerOptions += " -platform:x64"; break;
             }
 
-            parameters.CompilerOptions += " /define:__hqt__";
+            parameters.CompilerOptions += " -define:__hqt__";
 
             #if net40
             parameters.CompilerOptions += ";net40";
@@ -141,19 +150,22 @@ namespace SE.Hecate.Sharp
                 parameters.CompilerOptions += ";";
                 parameters.CompilerOptions += define;
             }
-
             parameters.IncludeDebugInformation = config.DebugSymbols;
             if (config.Optimize)
             {
-                parameters.CompilerOptions += " /optimize";
+                parameters.CompilerOptions += " -optimize";
             }
             if (type >= BuildModuleType.Console)
             {
                 parameters.GenerateExecutable = true;
                 if (type == BuildModuleType.Executable)
                 {
-                    parameters.CompilerOptions += " /target:winexe";
+                    parameters.CompilerOptions += " -target:winexe";
                 }
+            }
+            if (icon != null)
+            {
+                parameters.CompilerOptions += string.Concat(" -win32icon:\"", icon.GetAbsolutePath() , "\"");
             }
             return parameters;
         }

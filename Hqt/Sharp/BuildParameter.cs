@@ -7,6 +7,8 @@ using System.IO;
 using System.Runtime;
 using System.Runtime.CompilerServices;
 using SE.Config;
+using SE.Parsing;
+using SE.SharpLang;
 #if !NET_FRAMEWORK
 using SE.Hecate.Build;
 #endif
@@ -39,7 +41,7 @@ namespace SE.Hecate.Sharp
         [NamedProperty("referenceassemblies", TypeConverter = typeof(PathConverter))]
         private static PathDescriptor referenceAssemblies;
         /// <summary>
-        /// Dotnet SDK path
+        /// Framework Assembly Root
         /// </summary>
         public static PathDescriptor ReferenceAssemblies
         {
@@ -71,7 +73,7 @@ namespace SE.Hecate.Sharp
         #endif
 
         [NamedProperty("plugins", TypeConverter = typeof(PathConverter))]
-        private static HashSet<PathDescriptor> plugins = new HashSet<PathDescriptor>();
+        private static HashSet<PathDescriptor> plugins;
         /// <summary>
         /// A collection of paths that contain CSharp plugin assemblies
         /// </summary>
@@ -79,6 +81,16 @@ namespace SE.Hecate.Sharp
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
             get { return plugins; }
+        }
+
+        private readonly static List<IParserRulePool<SharpToken>> lintingRules;
+        /// <summary>
+        /// A collection of ParserRule providers used in addition when linting C# files
+        /// </summary>
+        public static List<IParserRulePool<SharpToken>> LintingRules
+        {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            get { return lintingRules; }
         }
 
         static BuildParameter()
@@ -99,6 +111,13 @@ namespace SE.Hecate.Sharp
             }
             #endif
             else Application.Warning(SeverityFlags.None, "Unsupported C# Platform");
+            lintingRules = new List<IParserRulePool<SharpToken>>();
+            {
+                lintingRules.Add(ParserRulePool<NamespaceRule, SharpToken>.Instance);
+                lintingRules.Add(ParserRulePool<UsingRule, SharpToken>.Instance);
+                lintingRules.Add(ParserRulePool<MainRule, SharpToken>.Instance);
+            }
+            plugins = new HashSet<PathDescriptor>();
         }
         private BuildParameter()
         { }

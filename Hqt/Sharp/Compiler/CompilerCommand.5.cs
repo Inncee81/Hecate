@@ -35,6 +35,16 @@ namespace SE.Hecate.Sharp
             get { return referencedAssemblies; }
         }
 
+        List<string> resources;
+        /// <summary>
+        /// A collection of resources embedded into this compiler request
+        /// </summary>
+        public List<string> Resources
+        {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            get { return resources; }
+        }
+
         Dictionary<string, string> frameworks;
         /// <summary>
         /// A collection of references to .Net 5 frameworks
@@ -97,6 +107,7 @@ namespace SE.Hecate.Sharp
             {
                 stream.WriteLine("-warnaserror");
             }
+            stream.WriteLine("-nowarn:1701");
             stream.WriteLine("-warn:4");
             stream.WriteLine("-langversion:latest");
             stream.WriteLine("-out:\"{0}\"", outputAssembly.GetRelativePath(Application.WorkerPath));
@@ -130,6 +141,14 @@ namespace SE.Hecate.Sharp
                     }
                 }
                 stream.WriteLine("-reference:\"{0}\"", assembly);
+            }
+            foreach (string resource in resources)
+            {
+                stream.WriteLine("-resource:\"{0}\"", resource);
+            }
+            if (icon != null)
+            {
+                stream.WriteLine("-win32icon:\"{0}\"", icon.GetAbsolutePath());
             }
             foreach (FileDescriptor source in sources)
             {

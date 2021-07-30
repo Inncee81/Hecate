@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Hqt": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\Misc\\NodeEditor -csc"
+    }
+  }
+}

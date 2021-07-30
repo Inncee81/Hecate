@@ -52,22 +52,11 @@ namespace SE.Hecate.Sharp
             bool fromCache = true;
 
             #region Rules
-            NamespaceRule namespaceRule = ParserRulePool<NamespaceRule, SharpToken>.Get();
-            namespaceRule.Linter = linter;
-
-            UsingRule usingRule = ParserRulePool<UsingRule, SharpToken>.Get();
-            usingRule.Linter = linter;
-
-            MainRule mainRule = ParserRulePool<MainRule, SharpToken>.Get();
-            mainRule.Linter = linter;
+            ParserRule<SharpToken>[] rules = ArrayPool<ParserRule<SharpToken>>.Default.Get(BuildParameter.LintingRules.Count);
             #endregion
 
             try
             {
-                linter.AddRule(namespaceRule);
-                linter.AddRule(usingRule);
-                linter.AddRule(mainRule);
-
                 #region Cache
                 CacheItem item;
                 bool hasCache = false;
@@ -90,6 +79,17 @@ namespace SE.Hecate.Sharp
                     else hasCache = !Build.BuildParameter.Rebuild;
                 }
                 #endregion
+
+                for (int i = 0; i < rules.Length; i++)
+                {
+                    ParserRule<SharpToken> rule = BuildParameter.LintingRules[i].Get();
+                    SharpParserRule tmp; if ((tmp = rule as SharpParserRule) != null)
+                    {
+                        tmp.Linter = linter;
+                    }
+                    linter.AddRule(rule);
+                    rules[i] = rule;
+                }
 
                 #region Lint
                 using (FileStream fs = file.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -133,14 +133,21 @@ namespace SE.Hecate.Sharp
                                     cache.Modified = true;
                                 }
                             }
-
-                            namespaceRule.Settings = config;
-                            namespaceRule.Cache = entry;
-
-                            usingRule.Settings = config;
-                            usingRule.Cache = entry;
-
-                            mainRule.Settings = config;
+                            foreach (ParserRule<SharpToken> rule in rules)
+                            {
+                                SharpParserRule tmp; if ((tmp = rule as SharpParserRule) != null)
+                                {
+                                    tmp.Settings = config;
+                                    if (tmp is NamespaceRule)
+                                    {
+                                        (tmp as NamespaceRule).Cache = entry;
+                                    }
+                                    else if (tmp is UsingRule)
+                                    {
+                                        (tmp as UsingRule).Cache = entry;
+                                    }
+                                }
+                            }
                             #endregion
 
                             foreach (string define in config.Defines)
@@ -160,9 +167,11 @@ namespace SE.Hecate.Sharp
             finally
             {
                 #region Rules
-                ParserRulePool<MainRule, SharpToken>.Return(mainRule);
-                ParserRulePool<UsingRule, SharpToken>.Return(usingRule);
-                ParserRulePool<NamespaceRule, SharpToken>.Return(namespaceRule);
+                for (int i = 0; i < rules.Length; i++)
+                {
+                    BuildParameter.LintingRules[i].Return(rules[i]);
+                }
+                ArrayPool<ParserRule<SharpToken>>.Default.Return(rules);
                 #endregion
             }
 

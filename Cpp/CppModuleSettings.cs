@@ -16,6 +16,7 @@ namespace SE.Hecate.Cpp
     public class CppModuleSettings
     {
         BuildConfiguration config;
+        bool isPackage;
 
         /// <summary>
         /// A name provided to this configuration
@@ -84,7 +85,14 @@ namespace SE.Hecate.Cpp
         public BuildModuleType AssemblyType
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return assemblyType; }
+            get 
+            { 
+                if(!isPackage && config.AssemblyType != BuildModuleType.Undefined)
+                {
+                    return config.AssemblyType;
+                }
+                else return assemblyType;
+            }
             [MethodImpl(OptimizationExtensions.ForceInline)]
             set { assemblyType = value; }
         }
@@ -116,10 +124,11 @@ namespace SE.Hecate.Cpp
         public CppModuleSettings(BuildConfiguration config, bool isPackage)
         {
             this.config = config;
+            this.isPackage = isPackage;
             this.includeDirectives = new HashSet<FileDescriptor>();
             this.references = new HashSet<FileDescriptor>();
             this.dependencies = new HashSet<BuildModule>();
-            this.assemblyType = ((isPackage) ? BuildModuleType.StaticLibrary : BuildModuleType.DynamicLibrary);
+            this.assemblyType = BuildModuleType.StaticLibrary;
         }
 
         [MethodImpl(OptimizationExtensions.ForceInline)]

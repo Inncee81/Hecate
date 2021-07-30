@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Resources;
 using System.Runtime;
 
 namespace SE.Hecate.Sharp
@@ -38,14 +37,16 @@ namespace SE.Hecate.Sharp
                         case "resx":
                             {
                                 FileDescriptor resourceFile = new FileDescriptor(buildCache, "{0}.resource", file.FullName);
-                                using (ResXResourceReader reader = new ResXResourceReader(file.Open(FileMode.Open, FileAccess.Read, FileShare.Read)))
-                                using (ResourceWriter writer = new ResourceWriter(resourceFile.GetAbsolutePath()))
+                                using (System.Resources.ResXResourceReader reader = new System.Resources.ResXResourceReader(file.Open(FileMode.Open, FileAccess.Read, FileShare.Read)))
+                                using (System.Resources.ResourceWriter writer = new System.Resources.ResourceWriter(resourceFile.GetAbsolutePath()))
                                 {
                                     reader.BasePath = file.Location.GetAbsolutePath();
                                     foreach (DictionaryEntry resource in reader)
                                         writer.AddResource(resource.Key as string, resource.Value);
                                 }
-                                compile.Sources[i] = resourceFile;
+                                compile.Resources.Add(resourceFile.GetAbsolutePath());
+                                compile.Sources.SwapRemove(i);
+                                i--;
                             }
                             break;
                         default: break;

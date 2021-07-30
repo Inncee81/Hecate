@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 using SE.Hecate.Build;
 using SE.Parsing;
 using SE.SharpLang;
@@ -14,115 +13,112 @@ namespace SE.Hecate.Sharp
     /// <summary>
     /// Static (Private | Protected | Internal | Public)* 'Main' RoundBracketOpen;
     /// </summary>
-    class MainRule : ParserRule<SharpToken>
+    class MainRule : SharpParserRule
     {
-        Linter linter;
-        /// <summary>
-        /// The Linter instance this rule is assigned to
-        /// </summary>
-        public Linter Linter
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return linter; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { linter = value; }
-        }
-        
-        SharpModuleSettings settings;
-        /// <summary>
-        /// A CSharp configuration instance currently in process
-        /// </summary>
-        public SharpModuleSettings Settings
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return settings; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { settings = value; }
-        }
+        int scope;
 
         /// <summary>
         /// Creates this rule
         /// </summary>
         public MainRule()
         { }
-        public override void Dispose()
-        {
-            linter = null;
-            settings = null;
-        }
 
         protected override ProductionState Process(SharpToken value)
         {
-            if (linter.Scope >= 2)
+            switch (State)
             {
-                switch (State)
-                {
-                    #region Static
-                    default:
-                    case 0: switch (value)
-                        {
-                            case SharpToken.Static:
-                                {
-                                    OnReset();
-                                    State = 1;
-                                }
-                                return ProductionState.Preserve;
-                            default:
-                                return ProductionState.Revert;
-                        }
-                    #endregion
+                
+                default:
+                case 0: switch (value)
+                    {
+                        case SharpToken.Class:
+                            {
+                                OnReset();
+                                State = 1;
+                            }
+                            return ProductionState.Preserve;
+                        default: return ProductionState.Revert;
+                    }
 
-                    #region (Private | Protected | Internal | Public)
-                    case 1: switch (value)
-                        {
-                            case SharpToken.Void:
-                            case SharpToken.Int:
-                                return ProductionState.Shift;
-                            case SharpToken.Private:
-                            case SharpToken.Protected:
-                            case SharpToken.Internal:
-                            case SharpToken.Public:
-                                return ProductionState.Preserve;
-                        }
-                        goto case 0;
-                    #endregion
+                case 1: switch (value)
+                    {
+                        case SharpToken.CurlyBracketOpen:
+                            {
+                                scope = Linter.Scope;
+                            }
+                            return ProductionState.Shift;
+                        default: return ProductionState.Preserve;
+                    }
+                    
+                #region Static
+                case 2: switch (value)
+                    {
+                        case SharpToken.CurlyBracketClose:
+                            {
+                                if (Linter.Scope < scope)
+                                    return ProductionState.Revert;
+                            }
+                            return ProductionState.Preserve;
+                        case SharpToken.Static:
+                            {
+                                State = 3;
+                            }
+                            return ProductionState.Preserve;
+                        default: return ProductionState.Preserve;
+                    }
+                #endregion
 
-                    #region 'Main'
-                    case 2: switch (value)
-                        {
-                            case SharpToken.Identifier:
-                                {
-                                    if (!linter.Buffer.Equals("Main", StringComparison.InvariantCulture))
-                                        break;
-                                }
-                                return ProductionState.Shift;
-                        }
-                        goto case 0;
-                    #endregion
+                #region (Private | Protected | Internal | Public)
+                case 3: switch (value)
+                    {
+                        case SharpToken.Void:
+                        case SharpToken.Int:
+                            return ProductionState.Shift;
+                        case SharpToken.Private:
+                        case SharpToken.Protected:
+                        case SharpToken.Internal:
+                        case SharpToken.Public:
+                            return ProductionState.Preserve;
+                    }
+                    goto case 2;
+                #endregion
 
-                    #region CurlyBraceOpen
-                    case 3: switch (value)
-                        {
-                            case SharpToken.RoundBracketOpen:
-                                return ProductionState.Success;
-                        }
-                        goto case 0;
-                        #endregion
-                }
+                #region 'Main'
+                case 4: switch (value)
+                    {
+                        case SharpToken.Identifier:
+                            {
+                                if (!Linter.Buffer.Equals("Main", StringComparison.InvariantCulture))
+                                    break;
+                            }
+                            return ProductionState.Shift;
+                    }
+                    goto case 2;
+                #endregion
+
+                #region RoundBracketOpen
+                case 5: switch (value)
+                    {
+                        case SharpToken.RoundBracketOpen:
+                            return ProductionState.Success;
+                    }
+                    goto case 2;
+                #endregion
             }
-            else return ProductionState.Revert;
         }
 
         [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnReset()
-        { }
+        {
+            scope = 0;
+        }
         [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnCompleted()
         {
-            lock (settings)
+            lock (Settings)
             {
-                if (settings.AssemblyType < BuildModuleType.Console)
-                    settings.AssemblyType = BuildModuleType.Console;
+                if (Settings.AssemblyType < BuildModuleType.Console)
+                    Settings.AssemblyType = BuildModuleType.Console;
             }
         }
     }

@@ -53,6 +53,18 @@ namespace SE.Hecate.Sharp
             get { return config.WarningAsError; }
         }
 
+        FileDescriptor icon;
+        /// <summary>
+        /// Specifies the program icon set to executeable assemblies
+        /// </summary>
+        public FileDescriptor Icon
+        {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            get{ return icon; }
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            set { icon = value; }
+        }
+
         /// <summary>
         /// Creates a new message instance from the provided settings
         /// </summary>
@@ -73,6 +85,7 @@ namespace SE.Hecate.Sharp
                  parameters.GenerateInMemory = false;
                  parameters.WarningLevel = 4;
             #else
+            this.resources = CollectionPool<List<string>, string>.Get();
             this.referencedAssemblies = CollectionPool<List<string>, string>.Get();
             this.frameworks = CollectionPool<Dictionary<string, string>, string, string>.Get();
             #endif
@@ -82,6 +95,7 @@ namespace SE.Hecate.Sharp
             #if !NET_FRAMEWORK
             CollectionPool<Dictionary<string, string>, string, string>.Return(frameworks);
             CollectionPool<List<string>, string>.Return(referencedAssemblies);
+            CollectionPool<List<string>, string>.Return(resources);
             #endif
             CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Return(sources);
             base.Dispose();

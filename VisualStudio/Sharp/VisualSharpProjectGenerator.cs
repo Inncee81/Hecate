@@ -119,6 +119,7 @@ namespace SE.Hecate.VisualStudio
                 #if !NET_FRAMEWORK
                 sw.WriteLine("    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>");
                 sw.WriteLine("    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>");
+                sw.WriteLine("    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>");
                 sw.WriteLine("    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>");
                 sw.WriteLine("    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>");
                 #endif

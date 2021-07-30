@@ -159,8 +159,8 @@ namespace SE.Hecate.Sharp
             AssemblyReflectContext ctx = new AssemblyReflectContext();
             ctx.EnterContextualReflection();
 
-            PathDescriptor assemblyPath;
-            if(BuildParameter.Dotnet.FindDirectory("Microsoft.NETCore.App/5.*", out assemblyPath))
+            PathDescriptor assemblyPath = FindLatest(BuildParameter.Dotnet, "Microsoft.NETCore.App/5.*");
+            if(assemblyPath != null)
             {
                 if (assemblyPath.FindFiles("*.dll", referenceAssemblies, PathSeekOptions.RootLevel | PathSeekOptions.Forward) > 0)
                 {
@@ -170,7 +170,8 @@ namespace SE.Hecate.Sharp
                 List<FileDescriptor> sources; if (assemblies.TryGetValue(string.Empty, out sources))
                     defaultAssemblies = sources.Count;
             }
-            if (BuildParameter.Dotnet.FindDirectory("Microsoft.WindowsDesktop.App/5.*", out assemblyPath))
+            assemblyPath = FindLatest(BuildParameter.Dotnet, "Microsoft.WindowsDesktop.App/5.*");
+            if (assemblyPath != null)
             {
                 referenceAssemblies.Clear();
                 assemblyList.Clear();
@@ -217,6 +218,30 @@ namespace SE.Hecate.Sharp
                              conf.References.Add(assembly);
                     }
             }
+        }
+
+        static PathDescriptor FindLatest(PathDescriptor root, string filter)
+        {
+            PathDescriptor latest = null;
+            List<FileSystemDescriptor> sdkPaths = CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Get();
+            try
+            {
+                Version latestVersion = new Version();
+                if (root.FindDirectories(filter, sdkPaths) != 0)
+                    foreach (PathDescriptor path in sdkPaths)
+                    {
+                        Version ver; if (Version.TryParse(path.Name, out ver) && ver > latestVersion)
+                        {
+                            latestVersion = ver;
+                            latest = path;
+                        }
+                    }
+            }
+            finally
+            {
+                CollectionPool<List<FileSystemDescriptor>, FileSystemDescriptor>.Return(sdkPaths);
+            }
+            return latest;
         }
     }
 }

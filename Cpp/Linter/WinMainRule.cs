@@ -3,57 +3,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 using SE.Parsing;
 using SE.CppLang;
-using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.Cpp
 {
     /// <summary>
     /// Int ('WINAPI' | _stdcall) ('WinMain' | 'wWinMain') RoundBracketOpen;
     /// </summary>
-    class WinMainRule : ParserRule<CppToken>
+    class WinMainRule : CppParserRule
     {
-        Linter linter;
-        /// <summary>
-        /// The Linter instance this rule is assigned to
-        /// </summary>
-        public Linter Linter
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return linter; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { linter = value; }
-        }
-
-        CppModuleSettings settings;
-        /// <summary>
-        /// A Cpp configuration instance currently in process
-        /// </summary>
-        public CppModuleSettings Settings
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return settings; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { settings = value; }
-        }
-
         /// <summary>
         /// Creates this rule
         /// </summary>
         public WinMainRule()
         { }
-        public override void Dispose()
-        {
-            linter = null;
-            settings = null;
-        }
 
         protected override ProductionState Process(CppToken value)
         {
-            if (linter.Scope > 0)
+            if (Linter.Scope > 0)
             {
                 switch (State)
                 {
@@ -75,7 +45,7 @@ namespace SE.Hecate.Cpp
                     #region ('WINAPI' | '__stdcall')
                     case 1: switch (value)
                         {
-                            case CppToken.Identifier: switch(linter.Buffer)
+                            case CppToken.Identifier: switch(Linter.Buffer)
                                 {
                                     case "__stdcall":
                                     case "WINAPI": 
@@ -95,7 +65,7 @@ namespace SE.Hecate.Cpp
                     #region ('WinMain' | 'wWinMain')
                     case 2: switch (value)
                         {
-                            case CppToken.Identifier: switch(linter.Buffer)
+                            case CppToken.Identifier: switch(Linter.Buffer)
                                 {
                                     case "WinMain":
                                     case "wWinMain":
@@ -113,7 +83,7 @@ namespace SE.Hecate.Cpp
                                 return ProductionState.Success;
                         }
                         goto case 0;
-                        #endregion
+                    #endregion
                 }
             }
             else return ProductionState.Revert;
@@ -125,10 +95,10 @@ namespace SE.Hecate.Cpp
         [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnCompleted()
         {
-            lock (settings)
+            lock (Settings)
             {
-                if (settings.AssemblyType < BuildModuleType.Executable)
-                    settings.AssemblyType = BuildModuleType.Executable;
+                if (Settings.AssemblyType < BuildModuleType.Executable)
+                    Settings.AssemblyType = BuildModuleType.Executable;
             }
         }
     }

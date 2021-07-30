@@ -16,15 +16,25 @@ namespace SE.Hecate.Sharp
     public class ValidationCommand : KernelMessage, IEnumerable<FileSystemDescriptor>
     {
         IEnumerable<FileSystemDescriptor> files;
+        BuildModule module;
 
-        string name;
         /// <summary>
         /// The name of the BuildModule instance attached to this action
         /// </summary>
         public string Name
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return name; }
+            get { return module.Name; }
+        }
+
+        /// <summary>
+        /// Determines if the BuildModule instance attached to this action was load 
+        /// as part of the package lookup
+        /// </summary>
+        public bool IsPackage
+        {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            get { return module.IsPackage; }
         }
 
         BuildProfile profile;
@@ -43,7 +53,7 @@ namespace SE.Hecate.Sharp
         public ValidationCommand(BuildModule module, BuildProfile profile, IEnumerable<FileSystemDescriptor> files)
             : base(module.Template | (UInt32)ProcessorFamilies.SharpInitialize, module.Location)
         {
-            this.name = module.Name;
+            this.module = module;
             this.profile = profile;
             this.files = files;
         }

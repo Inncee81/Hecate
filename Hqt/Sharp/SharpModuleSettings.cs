@@ -94,7 +94,14 @@ namespace SE.Hecate.Sharp
         public BuildModuleType AssemblyType
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return assemblyType; }
+            get 
+            { 
+                if(config.AssemblyType > BuildModuleType.StaticLibrary)
+                {
+                    return config.AssemblyType;
+                }
+                else return assemblyType;
+            }
             [MethodImpl(OptimizationExtensions.ForceInline)]
             set { assemblyType = value; }
         }

@@ -105,18 +105,11 @@ namespace SE.Hecate.Cpp
             bool fromCache = true;
 
             #region Rules
-            MainRule mainRule = ParserRulePool<MainRule, CppToken>.Get();
-            mainRule.Linter = linter;
-
-            WinMainRule winMainRule = ParserRulePool<WinMainRule, CppToken>.Get();
-            winMainRule.Linter = linter;
+            ParserRule<CppToken>[] rules = ArrayPool<ParserRule<CppToken>>.Default.Get(BuildParameter.LintingRules.Count);
             #endregion
 
             try
             {
-                linter.AddRule(mainRule);
-                linter.AddRule(winMainRule);
-
                 #region Cache
                 CacheItem item;
                 bool hasCache = false;
@@ -139,6 +132,17 @@ namespace SE.Hecate.Cpp
                     else hasCache = !Build.BuildParameter.Rebuild;
                 }
                 #endregion
+
+                for (int i = 0; i < rules.Length; i++)
+                {
+                    ParserRule<CppToken> rule = BuildParameter.LintingRules[i].Get();
+                    CppParserRule tmp; if ((tmp = rule as CppParserRule) != null)
+                    {
+                        tmp.Linter = linter;
+                    }
+                    linter.AddRule(rule);
+                    rules[i] = rule;
+                }
 
                 #region Lint
                 using (FileStream fs = file.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -197,8 +201,13 @@ namespace SE.Hecate.Cpp
                                 linter.Defines.Clear();
 
                                 #region Rules
-                                mainRule.Settings = config;
-                                winMainRule.Settings = config;
+                                foreach (ParserRule<CppToken> rule in rules)
+                                {
+                                    CppParserRule tmp; if ((tmp = rule as CppParserRule) != null)
+                                    {
+                                        tmp.Settings = config;
+                                    }
+                                }
                                 #endregion
 
                                 foreach (KeyValuePair<string, string> define in config.Defines)
@@ -223,8 +232,11 @@ namespace SE.Hecate.Cpp
             finally
             {
                 #region Rules
-                ParserRulePool<WinMainRule, CppToken>.Return(winMainRule);
-                ParserRulePool<MainRule, CppToken>.Return(mainRule);
+                for (int i = 0; i < rules.Length; i++)
+                {
+                    BuildParameter.LintingRules[i].Return(rules[i]);
+                }
+                ArrayPool<ParserRule<CppToken>>.Default.Return(rules);
                 #endregion
             }
 

@@ -13,34 +13,10 @@ namespace SE.Hecate.Sharp
     /// <summary>
     /// Namespace (Identifier | (Identifier Dot))+ CurlyBracketOpen;
     /// </summary>
-    public class NamespaceRule : ParserRule<SharpToken>
+    public class NamespaceRule : SharpParserRule
     {
         Stack<ValueTuple<int, string>> scopes;
         StringBuilder buffer;
-
-        Linter linter;
-        /// <summary>
-        /// The Linter instance this rule is assigned to
-        /// </summary>
-        public Linter Linter
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return linter; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { linter = value; }
-        }
-        
-        SharpModuleSettings settings;
-        /// <summary>
-        /// A CSharp configuration instance currently in process
-        /// </summary>
-        public SharpModuleSettings Settings
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return settings; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { settings = value; }
-        }
 
         CacheEntry cache;
         /// <summary>
@@ -64,8 +40,7 @@ namespace SE.Hecate.Sharp
         [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void Dispose()
         {
-            linter = null;
-            settings = null;
+            base.Dispose();
 
             StackPool<ValueTuple<int, string>>.Return(scopes);
             scopes = null;
@@ -81,7 +56,7 @@ namespace SE.Hecate.Sharp
                     {
                         case SharpToken.CurlyBracketClose:
                             {
-                                while (scopes.Count > 0 && scopes.Peek().Item1 >= linter.Scope)
+                                while (scopes.Count > 0 && scopes.Peek().Item1 >= Linter.Scope)
                                     scopes.Pop();
                             }
                             goto default;
@@ -101,7 +76,7 @@ namespace SE.Hecate.Sharp
                     {
                         case SharpToken.Identifier:
                             {
-                                buffer.Append(linter.Buffer);
+                                buffer.Append(Linter.Buffer);
                             }
                             return ProductionState.Shift;
                     }
@@ -136,15 +111,15 @@ namespace SE.Hecate.Sharp
         }
         public override void OnCompleted()
         {
-            ValueTuple<int, string> current = ValueTuple.Create(linter.Scope - 1, buffer.ToString());
+            ValueTuple<int, string> current = ValueTuple.Create(Linter.Scope - 1, buffer.ToString());
             foreach (ValueTuple<int, string> scope in scopes)
             {
                 buffer.Insert(0, '.');
                 buffer.Insert(0, scope.Item2);
             }
-            lock (settings.Namespaces)
+            lock (Settings.Namespaces)
             {
-                settings.Namespaces.Add(buffer.ToString());
+                Settings.Namespaces.Add(buffer.ToString());
             }
             cache.Namespaces.Add(buffer.ToString());
             scopes.Push(current);

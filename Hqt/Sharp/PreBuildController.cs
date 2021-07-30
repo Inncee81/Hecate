@@ -21,15 +21,6 @@ namespace SE.Hecate.Sharp
     [ProcessorUnit(IsExtension = true)]
     public class PrebuildController : ProcessorUnit, IPrioritizedActor
     {
-        private const string WinFormsAssembly = "System.Windows.Forms";
-        private readonly static string[] WpfAssemblies = new string[]
-        {
-            "PresentationCore",
-            "PresentationFramework",
-            "WindowsBase",
-            "System.Xaml",
-        };
-
         int IPrioritizedActor.Priority
         {
             [MethodImpl(OptimizationExtensions.ForceInline)]
@@ -177,20 +168,12 @@ namespace SE.Hecate.Sharp
                 foreach (string namespaceName in sharp.UsingDirectives)
                 {
                     tasks.Add(AssemblyCache.GetAssemblies(sharp, namespaceName));
-                    if (namespaceName.Equals(WinFormsAssembly) && sharp.AssemblyType == BuildModuleType.Console)
-                    {
-                        sharp.AssemblyType = BuildModuleType.Executable;
-                    }
                 }
                 await Taskʾ.WhenAll(tasks);
             }
             finally
             {
                 CollectionPool<List<Task>, Task>.Return(tasks);
-            }
-            if (sharp.AssemblyType == BuildModuleType.Console && sharp.UsingDirectives.Intersect(WpfAssemblies).Count() == WpfAssemblies.Length)
-            {
-                sharp.AssemblyType = BuildModuleType.Executable;
             }
         }
         private static void ProcessSecondPass(BuildModule module, SharpModuleSettings sharp, List<object> modules)

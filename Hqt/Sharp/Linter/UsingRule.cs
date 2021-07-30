@@ -13,33 +13,9 @@ namespace SE.Hecate.Sharp
     /// <summary>
     /// Using (Identifier | (Identifier Dot))+ Semicolon;
     /// </summary>
-    public class UsingRule : ParserRule<SharpToken>
+    public class UsingRule : SharpParserRule
     {
         StringBuilder buffer;
-
-        Linter linter;
-        /// <summary>
-        /// The Linter instance this rule is assigned to
-        /// </summary>
-        public Linter Linter
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return linter; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { linter = value; }
-        }
-        
-        SharpModuleSettings settings;
-        /// <summary>
-        /// A CSharp configuration instance currently in process
-        /// </summary>
-        public SharpModuleSettings Settings
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return settings; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { settings = value; }
-        }
 
         CacheEntry cache;
         /// <summary>
@@ -59,11 +35,6 @@ namespace SE.Hecate.Sharp
         public UsingRule()
         {
             this.buffer = new StringBuilder();
-        }
-        public override void Dispose()
-        {
-            linter = null;
-            settings = null;
         }
 
         protected override ProductionState Process(SharpToken value)
@@ -90,7 +61,7 @@ namespace SE.Hecate.Sharp
                     {
                         case SharpToken.Identifier:
                             {
-                                buffer.Append(linter.Buffer);
+                                buffer.Append(Linter.Buffer);
                             }
                             return ProductionState.Shift;
                     }
@@ -122,9 +93,9 @@ namespace SE.Hecate.Sharp
         [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnCompleted()
         {
-            lock (settings.UsingDirectives)
+            lock (Settings.UsingDirectives)
             {
-                settings.UsingDirectives.Add(buffer.ToString());
+                Settings.UsingDirectives.Add(buffer.ToString());
             }
             cache.UsingDirectives.Add(buffer.ToString());
         }

@@ -83,6 +83,17 @@ namespace SE.Hecate.Build
             get { return warningAsError; }
         }
 
+        [NamedProperty("assembly")]
+        BuildModuleType assemblyType;
+        /// <summary>
+        /// Defines the desired assembly output type
+        /// </summary>
+        public BuildModuleType AssemblyType
+        {
+            [MethodImpl(OptimizationExtensions.ForceInline)]
+            get { return assemblyType; }
+        }
+
         [NamedProperty("deploymentpaths", TypeConverter = typeof(KeyValuePairConverter))]
         Dictionary<string, string> targetPaths;
         /// <summary>
@@ -116,6 +127,7 @@ namespace SE.Hecate.Build
             this.debug = false;
             this.debugSymbols = true;
             this.warningAsError = true;
+            this.assemblyType = default(BuildModuleType);
 
             this.defines = new Dictionary<string, string>();
             this.targetPaths = new Dictionary<string, string>();

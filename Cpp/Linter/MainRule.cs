@@ -3,58 +3,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.CompilerServices;
 using SE.Hecate.Build;
 using SE.Parsing;
 using SE.CppLang;
-using System.Runtime.CompilerServices;
 
 namespace SE.Hecate.Cpp
 {
     /// <summary>
     /// Int 'main' RoundBracketOpen;
     /// </summary>
-    class MainRule : ParserRule<CppToken>
+    class MainRule : CppParserRule
     {
-        Linter linter;
-        /// <summary>
-        /// The Linter instance this rule is assigned to
-        /// </summary>
-        public Linter Linter
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return linter; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { linter = value; }
-        }
-        
-        CppModuleSettings settings;
-        /// <summary>
-        /// A Cpp configuration instance currently in process
-        /// </summary>
-        public CppModuleSettings Settings
-        {
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            get { return settings; }
-            [MethodImpl(OptimizationExtensions.ForceInline)]
-            set { settings = value; }
-        }
-
         /// <summary>
         /// Creates this rule
         /// </summary>
         public MainRule()
         { }
-        [MethodImpl(OptimizationExtensions.ForceInline)]
-        public override void Dispose()
-        {
-            linter = null;
-            settings = null;
-        }
 
         protected override ProductionState Process(CppToken value)
         {
-            if (linter.Scope == 0)
+            if (Linter.Scope == 0)
             {
                 switch (State)
                 {
@@ -78,7 +47,7 @@ namespace SE.Hecate.Cpp
                         {
                             case CppToken.Identifier:
                                 {
-                                    if (!linter.Buffer.Equals("main", StringComparison.InvariantCulture))
+                                    if (!Linter.Buffer.Equals("main", StringComparison.InvariantCulture))
                                         break;
                                 }
                                 return ProductionState.Shift;
@@ -93,7 +62,7 @@ namespace SE.Hecate.Cpp
                                 return ProductionState.Success;
                         }
                         goto case 0;
-                        #endregion
+                    #endregion
                 }
             }
             else return ProductionState.Revert;
@@ -105,10 +74,10 @@ namespace SE.Hecate.Cpp
         [MethodImpl(OptimizationExtensions.ForceInline)]
         public override void OnCompleted()
         {
-            lock (settings)
+            lock (Settings)
             {
-                if (settings.AssemblyType < BuildModuleType.Console)
-                    settings.AssemblyType = BuildModuleType.Console;
+                if (Settings.AssemblyType < BuildModuleType.Console)
+                    Settings.AssemblyType = BuildModuleType.Console;
             }
         }
     }
