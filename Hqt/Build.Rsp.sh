@@ -92,7 +92,12 @@ build_rsp() {
         for f in $package_path
         do
             print_debug "Found $f"
-            add_pkg "$f"
+            if [[ -d $f ]];
+            then
+                add_pkg "$f"
+            else
+                print_debug "Skipping. $f is not a directory"
+            fi
         done
     else
         package_path=$PKG_PATH
@@ -105,7 +110,7 @@ build_rsp() {
     fi
 
     print_info "Adding Apollo"
-    if [[ -d ../../Apollo/Packages ]];
+    if [[ -d "../../Apollo/Package" ]];
     then
         echo -recurse:"../../Apollo/Package/*.cs"       >> $RSPPATH
     else
