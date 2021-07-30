@@ -164,8 +164,13 @@ namespace SE.Hecate.Build
                 if (!SetupController.LoadSettings(profile.Name, profile))
                 {
                     Application.Warning(SeverityFlags.None, "Build profile '{0}' not found, loading default instead", profile.Name);
+                    PropertyMapper.Assign(profile, CommandLineOptions.Default, true, true);
+
+                    profile.AddDefaultValues();
+                    foreach (BuildConfiguration conf in profile.Configurations)
+                        PropertyMapper.Assign(conf, CommandLineOptions.Default, true, true);
                 }
-                profile.AddDefaultValues();
+                else profile.AddDefaultValues();
                 #endregion
 
                 #region Build Modules
