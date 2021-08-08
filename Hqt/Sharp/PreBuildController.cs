@@ -96,16 +96,33 @@ namespace SE.Hecate.Sharp
                             {
                                 return;
                             }
+                            bool idMatch = false;
                             foreach (PackageVersion version in pkg.References.Where(d => d.Key.Match(packageInfo.Id)).Select(d => d.Value))
+                            {
                                 if (version.Match(packageInfo.Version))
                                 {
                                     goto AddDependency;
                                 }
+                                else if (!idMatch)
+                                {
+                                    idMatch = true;
+                                }
+                            }
                             foreach (PackageVersion version in packageInfo.Dependencies.Where(d => d.Key.Match(pkg.Id)).Select(d => d.Value))
+                            {
                                 if (version.Match(pkg.Version))
                                 {
                                     goto AddDependency;
                                 }
+                                else if (!idMatch)
+                                {
+                                    idMatch = true;
+                                }
+                            }
+                            if (idMatch)
+                            {
+                                return;
+                            }
                         }
                         if (!Build.BuildParameter.Fast)
                         {
@@ -124,7 +141,7 @@ namespace SE.Hecate.Sharp
                     AddDependency:
                         lock (sharp.Dependencies)
                         {
-                            if(!sharp.AvaragePackageExists(pkg))
+                            if(!sharp.AvaragePackageExists(dependency.Location, pkg))
                                 sharp.Dependencies.Add(dependency);
                         }
                     }
@@ -150,7 +167,7 @@ namespace SE.Hecate.Sharp
                                     {
                                         lock (sharp.Dependencies)
                                         {
-                                            PackageMeta pkg; if (!dependency.TryGetProperty<PackageMeta>(out pkg) || !sharp.AvaragePackageExists(pkg))
+                                            PackageMeta pkg; if (!dependency.TryGetProperty<PackageMeta>(out pkg) || !sharp.AvaragePackageExists(dependency.Location, pkg))
                                             {
                                                 sharp.Dependencies.Add(dependency);
                                             }

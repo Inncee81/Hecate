@@ -3,7 +3,7 @@
     "description" : "Data driven code engine managing code modules, building projects and creating IDE files",
     "homepage" : "https://github.com/SchroedingerEntertainment/Hecate",
     "license" : "AGPL-3.0-or-later",
-    "version" : "1.8.1",
+    "version" : "1.9.0",
     "dependencies" : {
         "@schroedingerentertainment/se.apollo.package" : "^1.1.0",
         "@schroedingerentertainment/se.sharp.actor" : "^1.1.0",
