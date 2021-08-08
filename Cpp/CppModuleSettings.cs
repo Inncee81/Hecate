@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime;
 using System.Runtime.CompilerServices;
 using SE.Apollo.Package;
 using SE.Hecate.Build;
@@ -175,15 +176,22 @@ namespace SE.Hecate.Cpp
         /// <summary>
         /// Tests dependencies against package metadata and removes them if outdated
         /// </summary>
+        /// <param name="packageLocation">The target package location</param>
         /// <param name="meta">The package metadata to test against</param>
         /// <returns>True if a more recent package already exists, false otherwise</returns>
-        public bool AvaragePackageExists(PackageMeta meta)
+        public bool AvaragePackageExists(PathDescriptor packageLocation, PackageMeta meta)
         {
+            Any<bool> isPrimaryPackage = Any<bool>.Empty;
             foreach (BuildModule dependency in dependencies)
             {
                 PackageMeta pkg; if (dependency.TryGetProperty<PackageMeta>(out pkg) && pkg.Id.Equals(meta.Id))
                 {
-                    if (pkg.Version < meta.Version)
+                    if (!isPrimaryPackage.HasValue)
+                    {
+                        isPrimaryPackage = Application.ProjectRoot.Contains(packageLocation);
+                    }
+                    bool isPrimaryDependency = Application.ProjectRoot.Contains(dependency.Location);
+                    if ((pkg.Version < meta.Version && isPrimaryPackage.Value == isPrimaryDependency) || (isPrimaryPackage.Value && !isPrimaryDependency))
                     {
                         dependencies.Remove(dependency);
                         break;

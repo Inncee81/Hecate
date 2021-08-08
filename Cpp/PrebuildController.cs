@@ -96,16 +96,33 @@ namespace SE.Hecate.Cpp
                             {
                                 return;
                             }
+                            bool idMatch = false;
                             foreach (PackageVersion version in pkg.References.Where(d => d.Key.Match(packageInfo.Id)).Select(d => d.Value))
+                            {
                                 if (version.Match(packageInfo.Version))
                                 {
                                     goto AddDependency;
                                 }
+                                else if (!idMatch)
+                                {
+                                    idMatch = true;
+                                }
+                            }
                             foreach (PackageVersion version in packageInfo.Dependencies.Where(d => d.Key.Match(pkg.Id)).Select(d => d.Value))
+                            {
                                 if (version.Match(pkg.Version))
                                 {
                                     goto AddDependency;
                                 }
+                                else if (!idMatch)
+                                {
+                                    idMatch = true;
+                                }
+                            }
+                            if (idMatch)
+                            {
+                                return;
+                            }
                         }
                         if (!Build.BuildParameter.Fast)
                         {
@@ -120,7 +137,7 @@ namespace SE.Hecate.Cpp
                     AddDependency:
                         lock (cpp.Dependencies)
                         {
-                            if (!cpp.AvaragePackageExists(pkg))
+                            if (!cpp.AvaragePackageExists(dependency.Location, pkg))
                                  cpp.Dependencies.Add(dependency);
                         }
                     }
@@ -145,7 +162,7 @@ namespace SE.Hecate.Cpp
                                 {
                                     lock (cpp.Dependencies)
                                     {
-                                        PackageMeta pkg; if (!dependency.TryGetProperty<PackageMeta>(out pkg) || !cpp.AvaragePackageExists(pkg))
+                                        PackageMeta pkg; if (!dependency.TryGetProperty<PackageMeta>(out pkg) || !cpp.AvaragePackageExists(dependency.Location, pkg))
                                         {
                                             cpp.Dependencies.Add(dependency);
                                         }
